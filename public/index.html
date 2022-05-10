@@ -7,12 +7,19 @@
     <meta name="author" content="Michael Huang">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <h3>
+    <h3 id='titleText'>
         Testing
     </h3>
+    <input type="button" id="createRoomButton" value="Create Room">
+    <input type="text" id="createRoomName" placeholder="Room Name" autocomplete="off">
+    <input type="button" id="joinRoomButton" value="Join Room">
+    <input type="text" id="joinRoomCode" placeholder="Room Code" autocomplete="off">
+    <input type="button" id="leaveRoomButton" value="Leave Room">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/main.js"></script>
 </body>
