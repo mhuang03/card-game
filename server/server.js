@@ -77,7 +77,9 @@ const leaveRoom = (socket, room, callback) => {
         delete roomCodes[room.joinCode];
         delete rooms[room.id];
     } else if (socket.isHost) {
-        room.sockets[0].isHost = true;
+        let newHost = room.sockets[0];
+        newHost.isHost = true;
+        room.host = newHost;
     }
     
     socket.roomId = null;
@@ -106,9 +108,16 @@ io.on('connection', (socket) => {
     socket.on('createRoom', (roomName, callback) => {
         if (socket.hasOwnProperty('roomId')) {
             if (socket.roomId != null) {
-                leaveRoom(socket, rooms[socket.roomId]);
+                socket.emit('alreadyInRoom');
+                return;
             }
         }
+
+        if (roomName.trim() == '') {
+            socket.emit('emptyRoomName');
+            return;
+        }
+        
         createRoom(socket, roomName, () => {
             let room = rooms[socket.roomId];
             console.log(room.id);
@@ -118,18 +127,28 @@ io.on('connection', (socket) => {
                 joinCode: room.joinCode
             });
         });
-        
     });
 
     socket.on('joinRoom', (roomCode, callback) => {
+        if (socket.hasOwnProperty('roomId')) {
+            if (socket.roomId != null) {
+                socket.emit('alreadyInRoom');
+                return;
+            }
+        }
+        
         roomCode = roomCode.toUpperCase();
         let room = rooms[roomCodes[roomCode]];
-        joinRoom(socket, room, () => {
-            callback({
-                name: room.name,
-                joinCode: room.joinCode
+        if (room) {
+            joinRoom(socket, room, () => {
+                callback({
+                    name: room.name,
+                    joinCode: room.joinCode
+                });
             });
-        });
+        } else {
+            socket.emit('noSuchRoom');
+        }
     });
 
     socket.on('leaveRoom', (callback) => {
@@ -145,8 +164,13 @@ io.on('connection', (socket) => {
                             callback();
                         }
                     });
+                    return;
+                } else {
+                    socket.emit('roomDoesNotExist');
+                    return;
                 }
             }
         }
+        socket.emit('notInRoom');
     });
 });
