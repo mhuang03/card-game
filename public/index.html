@@ -19,17 +19,24 @@
         Not in a room.
     </h5>
     <h5 id="infoText"></h5>
-    <input type="button" id="createRoomButton" value="Create Room">
-    <input type="text" id="createRoomName" placeholder="Room Name" autocomplete="off">
-    <input type="button" id="joinRoomButton" value="Join Room">
-    <input type="text" id="joinRoomCode" placeholder="Room Code" autocomplete="off">
-    <input type="button" id="leaveRoomButton" value="Leave Room">
+    <div id="roomButtons">
+        <input type="button" id="createRoomButton" value="Create Room">
+        <input type="text" id="createRoomName" placeholder="Room Name" autocomplete="off">
+        <input type="button" id="joinRoomButton" value="Join Room">
+        <input type="text" id="joinRoomCode" placeholder="Room Code" autocomplete="off">
+        <input class="hidden" type="button" id="leaveRoomButton" value="Leave Room">
+    </div>
+    <div id="gameDiv" class="hidden">
+        <input class="hidden" type="button" id="startGameButton" value="Start Game">
+    </div>
+    <!--
     <div class="playingCards simpleCards">
         <div class="card rank-5 diams">
             <span class="rank">5</span>
             <span class="suit">&diams;</span>
         </div>
     </div>
+    -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/main.js"></script>
