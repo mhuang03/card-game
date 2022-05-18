@@ -37,19 +37,20 @@ createRoomButton.addEventListener('click', () => {
 joinRoomButton.addEventListener('click', () => {
     socket.emit('joinRoom', joinRoomCode.value, (roomInfo) => {
         joinRoomCode.value = '';
-        infoText.innerText = ''
+        infoText.innerText = '';
     });
 });
 
 leaveRoomButton.addEventListener('click', () => {
     socket.emit('leaveRoom', () => {
-        infoText.innerText = ''
+        infoText.innerText = '';
     });
 });
 
 startGameButton.addEventListener('click', () => {
     socket.emit('startGame', () => {
-       console.log('started game'); 
+        infoText.innerText = '';
+        console.log('started game'); 
     });
 });
 
@@ -97,6 +98,14 @@ socket.on('roomAlreadyFull', () => {
 
 socket.on('youAreHost', () => {
     startGameButton.classList.remove('hidden');
+});
+
+socket.on('notEnoughPlayers', () => {
+    infoText.innerText = 'Not enough players to start the game.';
+});
+
+socket.on('gameBegins', () => {
+    
 });
 
 socket.onAny((eventName, ...args) => {

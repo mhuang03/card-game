@@ -5,7 +5,11 @@ const socketIO = require('socket.io');
 const path = require('path');
 const uuid = require('uuid').v4;
 const rstring = require('randomstring').generate;
-const {parse, stringify} = require('flatted');
+//const {parse, stringify} = require('flatted');
+
+
+// Game
+const CardGame = require('./game.js').CardGame;
 
 // Constants
 const publicPath = path.join(__dirname, '/../public');
@@ -233,6 +237,8 @@ io.on('connection', (socket) => {
         }
 
         // start the game
+        let game = new CardGame(room);
+        
         emitToRoom(room, 'gameBegins', (callback) => {
             if (callback) {
                 callback();

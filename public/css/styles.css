@@ -2,3 +2,13 @@
     display: none;
     visibility: hidden;
 }
+
+.inline {
+    display: inline;
+}
+
+.infoText {
+    margin: 1.67em 0;
+    display: flex;
+    justify-content: space-between;
+}
