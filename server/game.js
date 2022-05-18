@@ -15,6 +15,7 @@ class CardGame {
                     this.turn = room.sockets.indexOf(s);
                 }
             }
+            s.emit('playerNumber', room.sockets.indexOf(s));
             s.hand.sort();
             s.emit('dealtHand', s.hand.toObjArr());
         }
@@ -27,12 +28,18 @@ class CardGame {
         let room = this.room;
         for (let socket of room.sockets) {
             socket.on('playCards', (cards, callback) => {
+                if (!cards)  {
+                    socket.emit('noCardsSubmitted');
+                    return;
+                }
+                
                 if (socket != this.currentPlayer) {
                     socket.emit('notYourTurn');
                     return;
                 }
 
-                if ((new Set(cards)).size !== cards.length) {
+                let stringArr = cards.map(card => card.rank + ' of ' + card.value)
+                if (stringArr.some((val, ind) => stringArr.indexOf(val) != ind)) {
                     socket.emit('duplicateCards');
                     return;
                 }
@@ -48,6 +55,11 @@ class CardGame {
                     return;
                 }
 
+                if (!socket.hand.contains(combo)) {
+                    socket.emit('comboNotInHand');
+                    return;
+                }
+
                 if (!this.newTrick) {
                     if (!combo.canPlayOn(this.previousCombo)) {
                         socket.emit('comboNotPlayable');
@@ -56,16 +68,46 @@ class CardGame {
                 }
                 
                 this.previousCombo = combo;
-                for (let s of room.sockets) {
-                    s.emit('comboPlayed', combo.toObjArr());
-                }
+                this.previousPlayer = socket;
+                this.emitToRoom('comboPlayed', combo.toObjArr());
 
                 socket.hand.play(combo);
+
+                if (socket.hand.length == 0) {
+                    socket.emit('youWin');
+                    this.emitToRoom('gameEnds');
+                }
+                
                 socket.emit('handUpdate', socket.hand.toObjArr());
-                this.turn += 1;
-                this.turn %= 3;
-                this.currentPlayer = this.room.sockets[this.turn];
+                this.advanceTurn;
+                if (callback) {
+                    callback();
+                }
             });
+
+            socket.on('skipTurn', (callback) => {
+                advanceTurn();
+            });
+        }
+    }
+
+    advanceTurn() {
+        this.turn += 1;
+        this.turn %= 3;
+        this.currentPlayer = this.room.sockets[this.turn];
+        if (this.currentPlayer == this.previousPlayer) {
+            emitToRoom('trickEnds');
+            this.newTrick = true;
+            this.previousCombo = undefined;
+            this.previousPlayer = undefined;
+        }
+        this.currentPlayer.emit('yourTurn');
+    }
+
+    emitToRoom(event, ...args) {
+        let room = this.room;
+        for (let s of room.sockets) {
+            s.emit(event, ...args);
         }
     }
 
@@ -175,14 +217,18 @@ class Hand {
     }
 
     contains(combo) {
-        return combo.cards.every(card => {
-            return this.cards.includes(card);
-        });
+        for (let c of combo.cards) {
+            if (!this.cards.some(card => card.rank == c.rank && card.suit == c.suit)) {
+                console.log(c);
+                return false;
+            }
+        }
+        return true;
     }
 
     play(combo) {
-        this.cards = this.cards.filter((card) => {
-            return !combo.cards.includes(card);
+        this.cards = this.cards.filter((c) => {
+            return !combo.cards.some(card => card.rank == c.rank && card.suit == c.suit)
         });
     }
 }
@@ -327,3 +373,4 @@ exports.CardGame = CardGame;
 exports.Card = Card;
 exports.compare = compare;
 exports.Combo = Combo;
+exports.Hand = Hand;

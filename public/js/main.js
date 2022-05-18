@@ -82,6 +82,7 @@ socket.on('notInRoom', () => {
     infoText.innerText = '';
     roomDetails.innerText = 'Not in a room.';
     toggleRoomButtons();
+    toggleGame();
 });
 
 socket.on('roomDoesNotExist', () => {
