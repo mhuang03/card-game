@@ -28,6 +28,11 @@ class CardGame {
         let room = this.room;
         for (let socket of room.sockets) {
             socket.on('playCards', (cards, callback) => {
+                if (!room.inGame) {
+                    socket.emit('notInGame');
+                    return;
+                }
+                
                 if (!cards)  {
                     socket.emit('noCardsSubmitted');
                     return;
@@ -38,7 +43,7 @@ class CardGame {
                     return;
                 }
 
-                let stringArr = cards.map(card => card.rank + ' of ' + card.value)
+                let stringArr = cards.map(card => card.rank + ' of ' + card.suit)
                 if (stringArr.some((val, ind) => stringArr.indexOf(val) != ind)) {
                     socket.emit('duplicateCards');
                     return;
@@ -66,27 +71,42 @@ class CardGame {
                         return;
                     }
                 }
+                this.newTrick = false;
                 
                 this.previousCombo = combo;
                 this.previousPlayer = socket;
+                socket.emit('comboAccepted', combo.toObjArr());
                 this.emitToRoom('comboPlayed', combo.toObjArr());
 
                 socket.hand.play(combo);
-
-                if (socket.hand.length == 0) {
+                console.log(socket.hand);
+                if (socket.hand.cards.length == 0) {
                     socket.emit('youWin');
                     this.emitToRoom('gameEnds');
+                    room.inGame = false;
+                    return;
                 }
                 
                 socket.emit('handUpdate', socket.hand.toObjArr());
-                this.advanceTurn;
+                this.advanceTurn();
                 if (callback) {
                     callback();
                 }
             });
 
             socket.on('skipTurn', (callback) => {
-                advanceTurn();
+                if (!room.inGame) {
+                    socket.emit('notInGame');
+                    return;
+                }
+
+                if (this.currentPlayer != socket) {
+                    socket.emit('notYourTurn');
+                    return;
+                }
+                
+                socket.emit('skippedTurn');
+                this.advanceTurn();
             });
         }
     }
@@ -96,7 +116,7 @@ class CardGame {
         this.turn %= 3;
         this.currentPlayer = this.room.sockets[this.turn];
         if (this.currentPlayer == this.previousPlayer) {
-            emitToRoom('trickEnds');
+            this.emitToRoom('trickEnds');
             this.newTrick = true;
             this.previousCombo = undefined;
             this.previousPlayer = undefined;
@@ -255,6 +275,9 @@ class Combo {
     }
 
     canPlayOn(other) {
+        if (this.name == 'Bomb' && other.name != 'Bomb') {
+            return true;
+        }
         return this.name == other.name &&
             this.base == other.base &&
             this.length == other.length &&
@@ -292,8 +315,7 @@ class Combo {
                 });
             }
         }
-
-        console.log(matches);
+        
         if (matches.length == 0) {
             this.name = 'Invalid';
             return;
@@ -318,8 +340,10 @@ class Combo {
             }
             return 0;
         });
+        console.log(matches);
 
         let finalMatch = matches.pop();
+        console.log(finalMatch);
         this.rank = finalMatch.rank;
         this.value = finalMatch.value;
         for (let prop of Object.keys(finalMatch.info)) {

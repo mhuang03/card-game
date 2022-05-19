@@ -37,7 +37,16 @@ combo.push(new Card('J', 'Spades'));
 combo.parse();
 //console.log(combo);
 //console.log(hand.contains(combo))
-hand.play(combo);
+//hand.play(combo);
 console.log(hand);
+
+let combo2 = new Combo();
+combo2.push(new Card('K', 'Diamonds'));
+combo2.push(new Card('K', 'Clubs'));
+combo2.push(new Card('K', 'Hearts'));
+combo2.push(new Card('K', 'Spades'));
+combo2.parse();
+
+console.log(combo2.canPlayOn(combo));
 
 //console.log(comboDict[4]);

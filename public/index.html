@@ -30,6 +30,13 @@
     </div>
     <div id="gameDiv" class="hidden">
         <input class="hidden" type="button" id="startGameButton" value="Start Game">
+        <input type="button" id="playCardsButton" value="Play Cards">
+        <input type="button" id="skipTurnButton" value="Skip Turn">
+        <span id="turnInfo"></span>
+        <div class="playingCards simpleCards" id="cardArea">
+            <ul class="hand" id="cardHand"></ul>
+            <ul class="hand" id="comboDisplay"></ul>
+        </div>
     </div>
     <!--
     <div class="playingCards simpleCards">
@@ -41,5 +48,6 @@
     -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="js/cards.js"></script>
     <script src="js/main.js"></script>
 </body>

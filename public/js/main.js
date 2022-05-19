@@ -13,6 +13,14 @@ const infoText = document.getElementById('infoText');
 
 const gameDiv = document.getElementById('gameDiv');
 const startGameButton = document.getElementById('startGameButton');
+const playCardsButton = document.getElementById('playCardsButton');
+const skipTurnButton = document.getElementById('skipTurnButton');
+
+const Card = window.Game.Card;
+const DisplayCard = window.Game.DisplayCard;
+const hand = document.getElementById('cardHand');
+const comboDisplay = document.getElementById('comboDisplay');
+const turnInfo = document.getElementById('turnInfo');
 
 const toggleRoomButtons = () => {
     createRoomButton.classList.toggle('hidden');
@@ -52,6 +60,21 @@ startGameButton.addEventListener('click', () => {
         infoText.innerText = '';
         console.log('started game'); 
     });
+});
+
+playCardsButton.addEventListener('click', () => {
+    let selected = [];
+    $('#cardHand').find('li>strong>label').each((idx, el) => {
+        selected.push({
+            rank: el.attributes.rank.value,
+            suit: el.attributes.suit.value
+        });
+    });
+    socket.emit('playCards', selected);
+});
+
+skipTurnButton.addEventListener('click', () => {
+    socket.emit('skipTurn');
 });
 
 socket.on('joinRoomSuccess', (roomInfo) => {
@@ -106,7 +129,93 @@ socket.on('notEnoughPlayers', () => {
 });
 
 socket.on('gameBegins', () => {
-    
+    infoText.innerText = '';
+});
+
+socket.on('dealtHand', (cards) => {
+    for (let c of cards) {
+        let card = new Card(c);
+        let $li = card.$li;
+        $li.appendTo('#cardHand');
+
+        let $card = $li.children().first();
+        $card.on('change', () => {
+            if ($card.parent().prop('tagName') == 'STRONG') {
+                $card.unwrap();
+            } else {
+                $card.wrap('<strong></strong>');
+            }
+        });
+        
+        $card.on('mouseenter mouseleave', () => {
+            if (!window.isSelecting || window.selection.includes($card)) {
+                return;
+            }
+            $card.click();
+            window.selection.push($card);
+        });
+
+        $card.on('mousedown', () => {
+            if (window.selection.includes($card)) {
+                return;
+            }
+            $card.click();
+            window.selection.push($card);
+        });
+    }
+});
+
+socket.on('comboAccepted', (cards) => {
+    for (let c of cards) {
+        let $card = $('#cardHand').find(`label[rank=${c.rank}][suit=${c.suit}]`);
+        $card.closest('li').detach();
+    }
+    turnInfo.innerText = '';
+});
+
+socket.on('comboPlayed', (cards) => {
+    $('#comboDisplay').empty();
+    for (let c of cards) {
+        let card = new DisplayCard(c);
+        let $li = card.$li;
+        $li.appendTo('#comboDisplay');
+    }
+});
+
+socket.on('trickEnds', () => {
+    $('#comboDisplay').empty();
+});
+
+socket.on('yourTurn', () => {
+    turnInfo.innerText = 'Your Turn';
+});
+
+socket.on('skippedTurn', () => {
+    turnInfo.innerText = '';
+});
+
+socket.on('youWin', () => {
+    infoText.innerText = 'You Win!';
+});
+
+socket.on('gameEnds', () => {
+    turnInfo.innerText = '';
+    $('#cardHand').empty();
+    $('#comboDisplay').empty();
+});
+
+window.isSelecting = false;
+window.selection = [];
+document.body.addEventListener('mousedown', () => {
+    window.isSelecting = true;
+});
+document.body.addEventListener('mouseup', () => {
+    window.isSelecting = false;
+    window.selection = [];
+});
+document.body.addEventListener('mouseleave', () => {
+    window.isSelecting = false;
+    window.selection = [];
 });
 
 socket.onAny((eventName, ...args) => {

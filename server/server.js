@@ -231,12 +231,19 @@ io.on('connection', (socket) => {
         }
         
         let room = rooms[socket.roomId];
+    
+        if (room.inGame) {
+            socket.emit('alreadyInGame');
+            return;
+        }
+            
         if (room.sockets.length < 3) {
             socket.emit('notEnoughPlayers');
             return;
         }
 
         // start the game
+        room.inGame = true;
         let game = new CardGame(room);
         
         emitToRoom(room, 'gameBegins', (callback) => {
