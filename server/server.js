@@ -24,16 +24,16 @@ app.get('/debug', function(req, res) {
     let info = {};
     for (let r of Object.keys(rooms)) {
         let room = rooms[r];
-        let socketIds = [];
-        for (let s of room.sockets) {
-            socketIds.push(s.id);
+        let playerIds = [];
+        for (let p of room.players) {
+            playerIds.push(p.id);
         }
         info[r] = {
             id: room.id,
             name: room.name,
             hostId: room.host.id,
             joinCode: room.joinCode,
-            socketIds: socketIds
+            playerIds: playerIds
         }
     }
     res.json(info);
@@ -47,7 +47,7 @@ let rooms = {};
 let roomCodes = {};
 
 // Lobby Methods
-const createRoom = (socket, roomName, callback) => {
+const createRoom = (player, roomName, callback) => {
     let newJoinCode = '';
     while (Object.keys(roomCodes).includes(newJoinCode) || newJoinCode == '') {
         newJoinCode = rstring({
@@ -61,67 +61,67 @@ const createRoom = (socket, roomName, callback) => {
     const newRoom = {
         id: uuid(),
         name: roomName,
-        host: socket,
+        host: player,
         joinCode: newJoinCode,
-        sockets: []
+        players: []
     }
     
     rooms[newRoom.id] = newRoom;
     roomCodes[newRoom.joinCode] = newRoom.id;
-    socket.isHost = true;
+    player.isHost = true;
     
-    joinRoom(socket, newRoom, () => {
-        console.log(socket.id, 'created room', newRoom.name, 'with id', newRoom.id);
+    joinRoom(player, newRoom, () => {
+        console.log(player.id, 'created room', newRoom.name, 'with id', newRoom.id);
         console.log(Object.keys(rooms).length);
-        socket.emit('youAreHost');
+        player.emit('youAreHost');
         if (callback) {
             callback();
         }
     });
 }
 
-const joinRoom = (socket, room, callback) => {
-    room.sockets.push(socket);
-    socket.join(room.id);
-    console.log(socket.id, 'joined room', room.name, 'with id', room.id);
-    socket.roomId = room.id;
+const joinRoom = (player, room, callback) => {
+    room.players.push(player);
+    player.join(room.id);
+    console.log(player.id, 'joined room', room.name, 'with id', room.id);
+    player.roomId = room.id;
 
-    if (!socket.isHost) {
-        socket.isHost = false;
+    if (!player.isHost) {
+        player.isHost = false;
     }
     
-    socket.emit('joinRoomSuccess', {
+    player.emit('joinRoomSuccess', {
         name: room.name,
         joinCode: room.joinCode
     });
 
-    emitToRoom(room, 'playerCountUpdate', room.sockets.length);
+    emitToRoom(room, 'playerCountUpdate', room.players.length);
     if (callback) {
         callback();
     }
 }
 
-const leaveRoom = (socket, room, callback) => {
-    socket.leave(room.id);
+const leaveRoom = (player, room, callback) => {
+    player.leave(room.id);
     
-    room.sockets = room.sockets.filter((item) => item !== socket);
-    console.log(socket.id, 'left room', room.name, 'with id', room.id);
+    room.playeres = room.players.filter((item) => item !== player);
+    console.log(player.id, 'left room', room.name, 'with id', room.id);
 
-    if (room.sockets.length == 0) {
+    if (room.players.length == 0) {
         //remove room from rooms
         delete roomCodes[room.joinCode];
         delete rooms[room.id];
-    } else if (socket.isHost) {
-        let newHost = room.sockets[0];
+    } else if (player.isHost) {
+        let newHost = room.players[0];
         newHost.isHost = true;
         room.host = newHost;
         newHost.emit('youAreHost');
     }
     
-    socket.roomId = null;
-    socket.isHost = null;
+    player.roomId = null;
+    player.isHost = null;
 
-    emitToRoom(room, 'playerCountUpdate', room.sockets.length);
+    emitToRoom(room, 'playerCountUpdate', room.players.length);
     if (callback) {
         callback();
     }
@@ -129,41 +129,41 @@ const leaveRoom = (socket, room, callback) => {
 
 // Helpers
 const emitToRoom = (room, event, ...args) => {
-    for (let s of room.sockets) {
-        s.emit(event, ...args);
+    for (let p of room.players) {
+        p.emit(event, ...args);
     }
 }
 
 // Listeners
 io.on('connection', (socket) => {
-    socket.id = uuid();
-    console.log(`User has connected with id ${socket.id}.`);
+    let player = new Player(socket, uuid());
+    console.log(`User has connected with id ${player.id}.`);
     
-    socket.on('disconnect', () => {
-        if (socket.hasOwnProperty('roomId')) {
-            if (socket.roomId != null) {
-                leaveRoom(socket, rooms[socket.roomId]);
+    player.on('disconnect', () => {
+        if (player.hasOwnProperty('roomId')) {
+            if (player.roomId != null) {
+                leaveRoom(player, rooms[player.roomId]);
             }
         }
         console.log('A user has disconnected');
         console.log(Object.keys(roomCodes));
     });
 
-    socket.on('createRoom', (roomName, callback) => {
-        if (socket.hasOwnProperty('roomId')) {
-            if (socket.roomId != null) {
-                socket.emit('alreadyInRoom');
+    player.on('createRoom', (roomName, callback) => {
+        if (player.hasOwnProperty('roomId')) {
+            if (player.roomId != null) {
+                player.emit('alreadyInRoom');
                 return;
             }
         }
 
         if (roomName.trim() == '') {
-            socket.emit('emptyRoomName');
+            player.emit('emptyRoomName');
             return;
         }
         
-        createRoom(socket, roomName, () => {
-            let room = rooms[socket.roomId];
+        createRoom(player, roomName, () => {
+            let room = rooms[player.roomId];
             console.log(room.id);
             console.log(room.joinCode);
             callback({
@@ -173,10 +173,10 @@ io.on('connection', (socket) => {
         });
     });
 
-    socket.on('joinRoom', (roomCode, callback) => {
-        if (socket.hasOwnProperty('roomId')) {
-            if (socket.roomId != null) {
-                socket.emit('alreadyInRoom');
+    player.on('joinRoom', (roomCode, callback) => {
+        if (player.hasOwnProperty('roomId')) {
+            if (player.roomId != null) {
+                player.emit('alreadyInRoom');
                 return;
             }
         }
@@ -185,60 +185,60 @@ io.on('connection', (socket) => {
         let room = rooms[roomCodes[roomCode]];
         
         if (room) {
-            if (room.sockets.length >= 3) {
-                socket.emit('roomAlreadyFull');
+            if (room.players.length >= 3) {
+                player.emit('roomAlreadyFull');
                 return;
             }
-            joinRoom(socket, room, () => {
+            joinRoom(player, room, () => {
                 callback({
                     name: room.name,
                     joinCode: room.joinCode
                 });
             });
         } else {
-            socket.emit('noSuchRoom');
+            player.emit('noSuchRoom');
         }
     });
 
-    socket.on('leaveRoom', (callback) => {
-        let room = rooms[socket.roomId];
-        if (socket.hasOwnProperty('roomId')) {
-            if (socket.roomId != null) {
-                if (rooms.hasOwnProperty(socket.roomId)) {
-                    leaveRoom(socket, room, () => {
+    player.on('leaveRoom', (callback) => {
+        let room = rooms[player.roomId];
+        if (player.hasOwnProperty('roomId')) {
+            if (player.roomId != null) {
+                if (rooms.hasOwnProperty(player.roomId)) {
+                    leaveRoom(player, room, () => {
                         console.log(room.id);
                         console.log(room.joinCode);
                         console.log(roomCodes);
-                        socket.emit('leaveRoomSuccess');
+                        player.emit('leaveRoomSuccess');
                         if (callback) {
                             callback();
                         }
                     });
                     return;
                 } else {
-                    socket.emit('roomDoesNotExist');
+                    player.emit('roomDoesNotExist');
                     return;
                 }
             }
         }
-        socket.emit('notInRoom');
+        player.emit('notInRoom');
     });
 
-    socket.on('startGame', (callback) => {
-        if (!socket.isHost) {
-            socket.emit('notHost');
+    player.on('startGame', (callback) => {
+        if (!player.isHost) {
+            player.emit('notHost');
             return;
         }
         
-        let room = rooms[socket.roomId];
+        let room = rooms[player.roomId];
     
         if (room.inGame) {
-            socket.emit('alreadyInGame');
+            player.emit('alreadyInGame');
             return;
         }
             
-        if (room.sockets.length < 3) {
-            socket.emit('notEnoughPlayers');
+        if (room.players.length < 3) {
+            player.emit('notEnoughPlayers');
             return;
         }
 
@@ -253,3 +253,26 @@ io.on('connection', (socket) => {
         });
     });
 });
+
+class Player {
+    constructor(socket, id) {
+        this.socket = socket;
+        this.id = id;
+    }
+
+    on(...args) {
+        return this.socket.on(...args);
+    }
+
+    emit(...args) {
+        return this.socket.emit(...args);
+    }
+
+    join(...args) {
+        return this.socket.join(...args);
+    }
+
+    leave(...args) {
+        return this.socket.leave(...args);
+    }
+}

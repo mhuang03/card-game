@@ -4,124 +4,105 @@ class CardGame {
     constructor(room) {
         this.room = room;
         let deck = new Deck();
-        for (let s of room.sockets) {
-            s.hand = new Hand();
+        for (let p of room.players) {
+            p.hand = new Hand();
             for (let i = 0; i < 16; i++) {
                 let card = deck.pop()
-                s.hand.push(card);
+                p.hand.push(card);
 
                 if (card.rank == '3' && card.suit == 'Hearts') {
-                    this.currentPlayer = s;
-                    this.turn = room.sockets.indexOf(s);
+                    this.currentPlayer = p;
+                    this.turn = room.players.indexOf(p);
                 }
             }
-            s.emit('playerNumber', room.sockets.indexOf(s));
-            s.hand.sort();
-            s.emit('dealtHand', s.hand.toObjArr());
+            p.emit('playerNumber', room.players.indexOf(p));
+            p.hand.sort();
+            p.emit('dealtHand', p.hand.toObjArr());
+            this.addListeners(p);
         }
-        this.addListeners();
         this.newTrick = true;
         this.currentPlayer.emit('yourTurn');
     }
 
-    addListeners() {
+    addListeners(player) {
         let room = this.room;
-        for (let socket of room.sockets) {
-            socket.on('playCards', (cards, callback) => {
-                if (!room.inGame) {
-                    socket.emit('notInGame');
-                    return;
-                }
-                
-                if (!cards)  {
-                    socket.emit('noCardsSubmitted');
-                    return;
-                }
-                
-                if (socket != this.currentPlayer) {
-                    socket.emit('notYourTurn');
-                    return;
-                }
+        player.on('playCards', (cards, callback) => {
+            if (!room.inGame) {
+                player.emit('notInGame');
+                return;
+            }
+            
+            if (!cards) {
+                player.emit('noCardsSubmitted');
+                return;
+            }
+            
+            if (player != this.currentPlayer) {
+                player.emit('notYourTurn');
+                return;
+            }
 
-                let stringArr = cards.map(card => card.rank + ' of ' + card.suit)
-                if (stringArr.some((val, ind) => stringArr.indexOf(val) != ind)) {
-                    socket.emit('duplicateCards');
+            let stringArr = cards.map(card => card.rank + ' of ' + card.suit)
+            if (stringArr.some((val, ind) => stringArr.indexOf(val) != ind)) {
+                player.emit('duplicateCards');
+                return;
+            }
+
+            let combo = new Combo();
+            for (let c of cards) {
+                combo.push(new Card(c.rank, c.suit));
+            }
+            
+            combo.parse();
+            if (combo.name == 'Invalid') {
+                player.emit('invalidCombo');
+                return;
+            }
+
+            if (!player.hand.contains(combo)) {
+                player.emit('comboNotInHand');
+                return;
+            }
+
+            if (!this.newTrick) {
+                if (!combo.canPlayOn(this.previousCombo)) {
+                    player.emit('comboNotPlayable');
                     return;
                 }
+            }
+            this.newTrick = false;
+            
+            this.previousCombo = combo;
+            this.previousPlayer = player;
+            player.emit('comboAccepted', combo.toObjArr());
+            this.emitToRoom('comboPlayed', combo.toObjArr());
 
-                let combo = new Combo();
-                for (let c of cards) {
-                    combo.push(new Card(c.rank, c.suit));
-                }
-                
-                combo.parse();
-                if (combo.name == 'Invalid') {
-                    socket.emit('invalidCombo');
-                    return;
-                }
-
-                if (!socket.hand.contains(combo)) {
-                    socket.emit('comboNotInHand');
-                    return;
-                }
-
-                if (!this.newTrick) {
-                    if (!combo.canPlayOn(this.previousCombo)) {
-                        socket.emit('comboNotPlayable');
-                        return;
-                    }
-                }
-                this.newTrick = false;
-                
-                this.previousCombo = combo;
-                this.previousPlayer = socket;
-                socket.emit('comboAccepted', combo.toObjArr());
-                this.emitToRoom('comboPlayed', combo.toObjArr());
-
-                socket.hand.play(combo);
-                console.log(socket.hand);
-                if (socket.hand.cards.length == 0) {
-                    socket.emit('youWin');
-                    this.emitToRoom('gameEnds');
-                    room.inGame = false;
-                    return;
-                }
-                
-                socket.emit('handUpdate', socket.hand.toObjArr());
-                this.advanceTurn();
-                if (callback) {
-                    callback();
-                }
-            });
-
-            /*
-            socket.on('skipTurn', (callback) => {
-                if (!room.inGame) {
-                    socket.emit('notInGame');
-                    return;
-                }
-
-                if (this.currentPlayer != socket) {
-                    socket.emit('notYourTurn');
-                    return;
-                }
-                
-                socket.emit('skippedTurn');
-                this.advanceTurn();
-            });
-            */
-        }
+            player.hand.play(combo);
+            console.log(player.hand);
+            if (player.hand.cards.length == 0) {
+                player.emit('youWin');
+                this.emitToRoom('gameEnds');
+                room.inGame = false;
+                return;
+            }
+            
+            player.emit('handUpdate', player.hand.toObjArr());
+            this.advanceTurn();
+            if (callback) {
+                callback();
+            }
+        });
     }
 
     advanceTurn() {
         this.turn += 1;
         this.turn %= 3;
-        this.currentPlayer = this.room.sockets[this.turn];
+        this.currentPlayer = this.room.players[this.turn];
         while (!this.currentPlayer.hand.canPlayOn(this.previousCombo)
               && this.currentPlayer != this.previousPlayer) {
             this.turn += 1;
             this.turn %= 3;
-            this.currentPlayer = this.room.sockets[this.turn];
+            this.currentPlayer = this.room.players[this.turn];
               }
         if (this.currentPlayer == this.previousPlayer) {
             this.emitToRoom('trickEnds');
@@ -134,8 +115,8 @@ class CardGame {
 
     emitToRoom(event, ...args) {
         let room = this.room;
-        for (let s of room.sockets) {
-            s.emit(event, ...args);
+        for (let p of room.players) {
+            p.emit(event, ...args);
         }
     }
 
@@ -148,8 +129,8 @@ class CardGame {
     }
 
     printHands() {
-        for (let s of this.room.sockets) {
-            console.log(s.hand);
+        for (let p of this.room.players) {
+            console.log(p.hand);
         }
     }
 }
