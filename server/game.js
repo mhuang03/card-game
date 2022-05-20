@@ -4,6 +4,7 @@ class CardGame {
     constructor(room) {
         this.room = room;
         let deck = new Deck();
+        
         for (let p of room.players) {
             p.hand = new Hand();
             for (let i = 0; i < 16; i++) {
@@ -15,11 +16,20 @@ class CardGame {
                     this.turn = room.players.indexOf(p);
                 }
             }
-            p.emit('playerNumber', room.players.indexOf(p));
+            let playerNumber = room.players.indexOf(p);
+            p.emit('playerNumber', playerNumber);
+            p.playerNumber = playerNumber;
             p.hand.sort();
             p.emit('dealtHand', p.hand.toObjArr());
             this.addListeners(p);
         }
+        this.emitToRoom('gameBegins', {
+            names: {
+                0: room.players[0].name || 'Guest 1',
+                1: room.players[1].name || 'Guest 2',
+                2: room.players[2].name || 'Guest 3',
+            }
+        });
         this.newTrick = true;
         this.currentPlayer.emit('yourTurn');
     }
@@ -75,19 +85,29 @@ class CardGame {
             this.previousCombo = combo;
             this.previousPlayer = player;
             player.emit('comboAccepted', combo.toObjArr());
-            this.emitToRoom('comboPlayed', combo.toObjArr());
-
             player.hand.play(combo);
+
+            this.emitToRoom('comboPlayed', {
+                combo: combo.toObjArr(),
+                handLengths: {
+                    0: room.players[0].hand.cards.length,
+                    1: room.players[1].hand.cards.length,
+                    2: room.players[2].hand.cards.length,
+                },
+                nextTurn: this.advanceTurn()
+            });
+
             console.log(player.hand);
             if (player.hand.cards.length == 0) {
                 player.emit('youWin');
-                this.emitToRoom('gameEnds');
+                this.emitToRoom('gameEnds', {
+                    winner: player.playerNumber
+                });
                 room.inGame = false;
                 return;
             }
             
             player.emit('handUpdate', player.hand.toObjArr());
-            this.advanceTurn();
             if (callback) {
                 callback();
             }
@@ -111,6 +131,7 @@ class CardGame {
             this.previousPlayer = undefined;
         }
         this.currentPlayer.emit('yourTurn');
+        return this.turn;
     }
 
     emitToRoom(event, ...args) {

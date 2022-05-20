@@ -6,6 +6,8 @@ const createRoomButton = document.getElementById('createRoomButton');
 const createRoomName = document.getElementById('createRoomName');
 const joinRoomButton = document.getElementById('joinRoomButton');
 const joinRoomCode = document.getElementById('joinRoomCode');
+const setNameButton = document.getElementById('setNameButton');
+const setNameValue = document.getElementById('setNameValue');
 const leaveRoomButton = document.getElementById('leaveRoomButton');
 
 const roomDetails = document.getElementById('roomDetails');
@@ -27,6 +29,8 @@ const toggleRoomButtons = () => {
     createRoomName.classList.toggle('hidden');
     joinRoomButton.classList.toggle('hidden');
     joinRoomCode.classList.toggle('hidden');
+    setNameButton.classList.toggle('hidden');
+    setNameValue.classList.toggle('hidden');
     leaveRoomButton.classList.toggle('hidden');
 };
 
@@ -62,6 +66,10 @@ startGameButton.addEventListener('click', () => {
     });
 });
 
+setNameButton.addEventListener('click', () => {
+    socket.emit('setName', setNameValue.value);
+});
+
 playCardsButton.addEventListener('click', () => {
     let selected = [];
     $('#cardHand').find('li>strong>label').each((idx, el) => {
@@ -71,10 +79,6 @@ playCardsButton.addEventListener('click', () => {
         });
     });
     socket.emit('playCards', selected);
-});
-
-skipTurnButton.addEventListener('click', () => {
-    socket.emit('skipTurn');
 });
 
 socket.on('joinRoomSuccess', (roomInfo) => {
@@ -104,8 +108,6 @@ socket.on('noSuchRoom', () => {
 socket.on('notInRoom', () => {
     infoText.innerText = '';
     roomDetails.innerText = 'Not in a room.';
-    toggleRoomButtons();
-    toggleGame();
 });
 
 socket.on('roomDoesNotExist', () => {
@@ -128,8 +130,13 @@ socket.on('notEnoughPlayers', () => {
     infoText.innerText = 'Not enough players to start the game.';
 });
 
-socket.on('gameBegins', () => {
+socket.on('gameBegins', (data) => {
     infoText.innerText = '';
+    let names = data.names;
+    for (let i = 0; i < 3; i++) {
+        $(`#player${i}-name`).text(`${names[i]}: `);
+        $(`#player${i}-handlength`).text('16');
+    }
 });
 
 socket.on('dealtHand', (cards) => {
@@ -173,12 +180,23 @@ socket.on('comboAccepted', (cards) => {
     turnInfo.innerText = '';
 });
 
-socket.on('comboPlayed', (cards) => {
+socket.on('comboPlayed', (data) => {
     $('#comboDisplay').empty();
-    for (let c of cards) {
+    for (let c of data.combo) {
         let card = new DisplayCard(c);
         let $li = card.$li;
         $li.appendTo('#comboDisplay');
+    }
+
+    let handLengths = data.handLengths;
+    for (let i = 0; i < 3; i++) {
+        $(`#player${i}-handlength`).text(handLengths[i]);
+
+        if (i == data.nextTurn) {
+            $(`#player${i}`).addClass('currentTurn');
+        } else {
+            $(`#player${i}`).removeClass('currentTurn');
+        }
     }
 });
 
@@ -202,6 +220,10 @@ socket.on('gameEnds', () => {
     turnInfo.innerText = '';
     $('#cardHand').empty();
     $('#comboDisplay').empty();
+});
+
+socket.on('nameSet', (name) => {
+    $('#setNameValue').val('').attr('placeholder', name);
 });
 
 window.isSelecting = false;

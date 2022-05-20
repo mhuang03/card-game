@@ -26,6 +26,8 @@
         <input type="text" id="createRoomName" placeholder="Room Name" autocomplete="off">
         <input type="button" id="joinRoomButton" value="Join Room">
         <input type="text" id="joinRoomCode" placeholder="Room Code" autocomplete="off">
+        <input type="button" id="setNameButton" value="Set Name">
+        <input type="text" id="setNameValue" placeholder="Guest" autocomplete="off">
         <input class="hidden" type="button" id="leaveRoomButton" value="Leave Room">
     </div>
     <div id="gameDiv" class="hidden">
@@ -36,16 +38,22 @@
         <div class="playingCards simpleCards" id="cardArea">
             <ul class="hand" id="cardHand"></ul>
             <ul class="hand" id="comboDisplay"></ul>
+            <div id="playersDisplay">
+                <span id="player0">
+                    <span id="player0-name"></span>
+                    <span id="player0-handlength"></span>
+                </span>
+                <span id="player1">
+                    <span id="player1-name"></span>
+                    <span id="player1-handlength"></span>
+                </span>
+                <span id="player2">
+                    <span id="player2-name"></span>
+                    <span id="player2-handlength"></span>
+                </span>
+            </div>
         </div>
     </div>
-    <!--
-    <div class="playingCards simpleCards">
-        <div class="card rank-5 diams">
-            <span class="rank">5</span>
-            <span class="suit">&diams;</span>
-        </div>
-    </div>
-    -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/cards.js"></script>

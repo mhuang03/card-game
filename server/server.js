@@ -5,7 +5,6 @@ const socketIO = require('socket.io');
 const path = require('path');
 const uuid = require('uuid').v4;
 const rstring = require('randomstring').generate;
-//const {parse, stringify} = require('flatted');
 
 
 // Game
@@ -85,10 +84,6 @@ const joinRoom = (player, room, callback) => {
     player.join(room.id);
     console.log(player.id, 'joined room', room.name, 'with id', room.id);
     player.roomId = room.id;
-
-    if (!player.isHost) {
-        player.isHost = false;
-    }
     
     player.emit('joinRoomSuccess', {
         name: room.name,
@@ -104,7 +99,7 @@ const joinRoom = (player, room, callback) => {
 const leaveRoom = (player, room, callback) => {
     player.leave(room.id);
     
-    room.playeres = room.players.filter((item) => item !== player);
+    room.players = room.players.filter((item) => item !== player);
     console.log(player.id, 'left room', room.name, 'with id', room.id);
 
     if (room.players.length == 0) {
@@ -244,13 +239,13 @@ io.on('connection', (socket) => {
 
         // start the game
         room.inGame = true;
-        let game = new CardGame(room);
-        
-        emitToRoom(room, 'gameBegins', (callback) => {
-            if (callback) {
-                callback();
-            }
-        });
+        this.game = new CardGame(room);
+    });
+
+    player.on('setName', (name) => {
+        console.log(name);
+        player.name = name;
+        player.emit('nameSet', name);
     });
 });
 
@@ -258,6 +253,7 @@ class Player {
     constructor(socket, id) {
         this.socket = socket;
         this.id = id;
+        this.isHost = false;
     }
 
     on(...args) {
