@@ -23,17 +23,13 @@ let game = new CardGame({
 //game.printHands();
 //console.log(game);
 let hand = new Hand();
-hand.push(new Card('Q', 'Hearts'));
-hand.push(new Card('Q', 'Diamonds'));
-hand.push(new Card('Q', 'Clubs'));
+hand.push(new Card('9', 'Spades'));
 hand.push(new Card('J', 'Spades'));
+hand.push(new Card('2', 'Spades'));
 console.log(hand);
 
 let combo = new Combo();
-combo.push(new Card('Q', 'Diamonds'));
-combo.push(new Card('Q', 'Clubs'));
-combo.push(new Card('Q', 'Hearts'));
-combo.push(new Card('J', 'Spades'));
+combo.push(new Card('A', 'Diamonds'));
 combo.parse();
 //console.log(combo);
 //console.log(hand.contains(combo))
@@ -45,8 +41,8 @@ combo2.push(new Card('K', 'Diamonds'));
 combo2.push(new Card('K', 'Clubs'));
 combo2.push(new Card('K', 'Hearts'));
 combo2.push(new Card('K', 'Spades'));
-combo2.parse();
+//combo2.parse();
 
-console.log(combo2.canPlayOn(combo));
+console.log(hand.canPlayOn(combo));
 
 //console.log(comboDict[4]);

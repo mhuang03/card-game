@@ -94,6 +94,7 @@ class CardGame {
                 }
             });
 
+            /*
             socket.on('skipTurn', (callback) => {
                 if (!room.inGame) {
                     socket.emit('notInGame');
@@ -108,6 +109,7 @@ class CardGame {
                 socket.emit('skippedTurn');
                 this.advanceTurn();
             });
+            */
         }
     }
 
@@ -115,6 +117,12 @@ class CardGame {
         this.turn += 1;
         this.turn %= 3;
         this.currentPlayer = this.room.sockets[this.turn];
+        while (!this.currentPlayer.hand.canPlayOn(this.previousCombo)
+              && this.currentPlayer != this.previousPlayer) {
+            this.turn += 1;
+            this.turn %= 3;
+            this.currentPlayer = this.room.sockets[this.turn];
+              }
         if (this.currentPlayer == this.previousPlayer) {
             this.emitToRoom('trickEnds');
             this.newTrick = true;
@@ -250,6 +258,50 @@ class Hand {
         this.cards = this.cards.filter((c) => {
             return !combo.cards.some(card => card.rank == c.rank && card.suit == c.suit)
         });
+    }
+
+    canPlayOn(combo) {
+        let cardCount = combo.base * combo.length + combo.kicker;
+        let comboValue = combo.value;
+        if (this.cards.length < cardCount) {
+            return false;
+        }
+
+        let ranks = this.getRankArray();
+        console.log(ranks);
+        let highestValue = 0;
+        let currentLength = 0;
+        let hasBomb = false;
+        for (let i = 0; i < ranks.length; i++) {
+            let rankCount = ranks[i];
+            if (rankCount == 4) {
+                hasBomb = true;
+            }
+            if (rankCount >= combo.base) {
+                currentLength += 1;
+                if (currentLength >= combo.length) {
+                    highestValue = i
+                }
+            } else {
+                currentLength = 0;
+            }
+        }
+        if (highestValue > combo.value) {
+            return true;
+        }
+        if (combo.name != 'Bomb' && hasBomb) {
+            return true;
+        }
+
+        return false;
+    }
+
+    getRankArray() {
+        let arr = new Array(13).fill(0);
+        for (let c of this.cards) {
+            arr[valueMap[c.rank]] += 1;
+        }
+        return arr;
     }
 }
 
