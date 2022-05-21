@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+body {
+    font-family: 'Lato', sans-serif;
+    padding: 2em;
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+
+.inline {
+    display: inline;
+}
+
+.infoText {
+    margin: 1.67em 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.card {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.name {
+    
+}
+
+.score {
+    
+}
+
+.player {
+    
+}
+
+.opponent {
+    
+}
+
+#myCards {
+    
+}
+
+#opponentCards {
+    
+}
+
+#game {
+    
+}

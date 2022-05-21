@@ -1,5 +1,17 @@
 const $ = jQuery;
-const socket = io();
+
+let token = sessionStorage.getItem('token');
+let name = sessionStorage.getItem('name');
+let auth = {};
+if (token) {
+    auth['token'] = token;
+}
+if (name) {
+    auth['name'] = name;
+}
+const socket = io({
+    auth: auth
+});
 console.log(socket);
 
 const createRoomButton = document.getElementById('createRoomButton');
@@ -224,6 +236,12 @@ socket.on('gameEnds', () => {
 
 socket.on('nameSet', (name) => {
     $('#setNameValue').val('').attr('placeholder', name);
+    sessionStorage.setItem('name', name);
+});
+
+socket.on('session', (data) => {
+    socket.id = data.id;
+    sessionStorage.setItem('token', data.token);
 });
 
 window.isSelecting = false;

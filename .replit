@@ -1,4 +1,4 @@
-entrypoint = "server/server.js"
+entrypoint = "v2/server/server.js"
 
 [interpreter]
 command = [
