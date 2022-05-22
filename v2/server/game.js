@@ -26,7 +26,7 @@ class CardGame {
             this.turn = lastWinner.playerNumber;
         }
         this.newTrick = true;
-        room.emitRoomStateUpdate();
+        //room.emitRoomStateUpdate();
         this.emitGameStateUpdate();
     }
 

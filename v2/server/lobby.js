@@ -63,11 +63,19 @@ class LobbyManager {
 
     setupListeners(player) {
         player.on('disconnect', () => {
-            setTimeout(() => {
-                if (player.inRoom) {
-                    player.leaveRoom();
+            player.timeout = setTimeout(() => {
+                if (!player.socket.connected) {
+                    if (player.inRoom) {
+                        player.leaveRoom();
+                    }
                 }
             }, 120000);
+        });
+        player.on('connect', () => {
+            if (player.timeout) {
+                clearTimeout(player.timeout);
+                player.timeout = undefined;
+            }
         });
         
         player.on('createRoom', (roomName, callback) => {
@@ -147,6 +155,7 @@ class LobbyManager {
                 callback(player.roomResponse('Please enter a non-empty name.'));
                 return;
             }
+            name = name.trim();
 
             if (player.inRoom) {
                 for (let p of player.room.players) {
@@ -154,6 +163,20 @@ class LobbyManager {
                         callback(player.roomResponse('Please choose a unique name.'));
                         return;
                     }
+                }
+            }
+
+            if (name.length > 16) {
+                callback(player.roomResponse('Names have a max length of 16.'));
+                return;
+            }
+
+            for (let char of [...name]) {
+                let charCode = char.charCodeAt(0);
+                if ((charCode > 126 || charCode < 32) && !(charCode == 160)) {
+                    console.log(charCode);
+                    callback(player.roomResponse('ASCII characters only.'));
+                    return;
                 }
             }
 
@@ -182,12 +205,12 @@ class Room {
     }
 
     startGame() {
+        this.inGame = true;
         if (this.lastWinner) {
             this.game = new CardGame(this, this.lastWinner);
         } else {
             this.game = new CardGame(this);
         }
-        this.inGame = true;
     }
 
     endGame() {
@@ -273,6 +296,7 @@ class Room {
                 score: this.scores.get(player)
             },
             joinCode: this.joinCode,
+            roomName: this.name,
             inGame: this.inGame,
             full: this.size >= 3,
             host: {
@@ -441,6 +465,9 @@ class Player {
             this.name = name;
             if (this.inRoom) {
                 this.room.emitRoomStateUpdate();
+                if (this.room.inGame) {
+                    this.room.game.emitGameStateUpdate();
+                }
             } else {
                 this.emit('roomStateUpdate', this.roomResponse());
             }

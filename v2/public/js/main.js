@@ -167,6 +167,7 @@
         if (roomState.inRoom) {
             let roomInfo = roomState.roomInfo;
             $('#joinCode > div > span.joinCode').text(roomInfo.joinCode);
+            $('#titleText > h3').text(roomInfo.roomName);
             $('#lobbyList').removeClass('hidden');
             $('#lobbyList > .player')
                 .each((idx, item) => {
@@ -198,12 +199,13 @@
                 $('#opponentCards > .opponent > ul')
                     .each((idx, item) => {
                         $(item).empty().removeClass('fadeCards');
-                        $(item).siblings().empty().removeClass('underline');
+                        $(item).siblings().empty().removeClass('turn');
                     });
                 $('#myCards > ul').empty().removeClass('fadeCards');
                 $('#lastCombo > ul').empty().removeClass('fadeCards');
                 $('#playCards').addClass('clear');
                 $('#app').addClass('preGame');
+                $('#playerName > div > span').removeClass('turn');
             } else {
                 $('#app').removeClass('preGame');
             }
@@ -217,8 +219,10 @@
             $('#createRoom').addClass('hidden');
             $('#joinRoom').addClass('hidden');
             $('#leaveRoom').removeClass('hidden');
+            $('#lobby').removeClass('preRoom');
         } else {
             $('#joinCode > div > span.joinCode').text('');
+            $('#titleText > h3').text('Card Game');
             $('#lobbyList').addClass('hidden');
             $('#lobbyList > .player')
                 .each((idx, item) => {
@@ -235,6 +239,8 @@
             $('#startGame').addClass('hidden');
             $('#playCards').addClass('clear');
             $('#app').addClass('preGame');
+            $('#playerName > div > span').removeClass('turn');
+            $('#lobby').addClass('preRoom');
         }
         $('#setName').removeClass('hidden');
 
@@ -285,10 +291,10 @@
 
                 if (op == players[turn]) {
                     $newOp.removeClass('fadeCards');
-                    $op.siblings('span.opponentName').addClass('underline');
+                    $op.siblings('span.opponentName').addClass('turn');
                 } else {
                     $newOp.addClass('fadeCards');
-                    $op.siblings('span.opponentName').removeClass('underline');
+                    $op.siblings('span.opponentName').removeClass('turn');
                 }
                 $op.replaceWith($newOp);
             });
@@ -334,11 +340,13 @@
         if (turn != self) {
             $newCards.addClass('fadeCards');
             $('#playCards').addClass('clear');
+            $('#playerName > div > span').removeClass('turn');
         } else {
             $newCards.removeClass('fadeCards');
             if (!gameState.winner) {
                 $('#playCards').removeClass('clear');
             }
+            $('#playerName > div > span').addClass('turn');
         }
 
         if (gameState.previousCombo) {
@@ -360,10 +368,11 @@
             $('#opponentCards > .opponent > ul')
                 .each((idx, item) => {
                     $(item).removeClass('fadeCards');
-                    $(item).siblings().removeClass('underline');
+                    $(item).siblings().removeClass('turn');
                 });
             $('#myCards > ul').removeClass('fadeCards');
             $('#lastCombo > ul').removeClass('fadeCards');
+            $('#playerName > div > span').removeClass('turn');
         }
 
         if (errorMsg) {

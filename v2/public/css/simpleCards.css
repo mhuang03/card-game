@@ -92,12 +92,12 @@ ul.hand,
 ul.deck {
     list-style-type: none;
     padding: 0;
-    margin: 0 0 1.5em 0;
+    margin: 0 0 0.5em 0;
     position: relative;
     clear: both;
 }
 ul.hand {
-    margin-bottom: 1.5em;
+    margin-bottom: 0.5em;
 }
 ul.table li,
 ul.hand li,

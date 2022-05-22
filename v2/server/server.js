@@ -90,6 +90,12 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
     let player = socket.player;
     player.emitSession();
+    player.emit('roomStateUpdate', player.roomResponse());
+    if (player.inRoom) {
+        if (player.room.inGame) {
+            player.emit('gameStateUpdate', player.room.game.gameResponse());
+        }
+    }
     console.log(`user joined with id ${player.id} and token ${player.token}`)
     
     lobby.setupListeners(player);
