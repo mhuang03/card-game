@@ -18,7 +18,6 @@ let app = express();
 let server = http.createServer(app);
 let io = socketIO(server);
 app.use((req, res, next) => {
-    console.log('request received');
     next();
 });
 app.use(express.static(publicPath));
@@ -28,17 +27,20 @@ app.get('/debug', (req, res) => {
 });
 
 app.get('/:joinCode', (req, res) => {
-    console.log('attempt to server index');
     let joinCode = req.params.joinCode;
     if (lobby.roomCodes.has(joinCode)) {
-        return res.sendFile('index.html', {
-            root: publicPath
-        });
+        let room = lobby.roomFromCode(joinCode);
+        if (!room.full && room.size < 3) {
+            return res.sendFile('index.html', {
+                root: publicPath
+            });
+        }
     }
     return res.redirect('/');
 });
 
 server.listen(port, () => {
+    
     console.log(`Server is up on port ${port}.`);
 });
 
@@ -49,7 +51,6 @@ let lobby = new LobbyManager();
 /* Setup Connection */
 io.use((socket, next) => {
     // attempt to retrieve session from a token
-    console.log('attempt to retrieve session from a token');
     let player = undefined;
     let sessionToken = socket.handshake.auth.token;
     if (sessionToken) {
@@ -67,7 +68,6 @@ io.use((socket, next) => {
 });
 io.use((socket, next) => {
     // join lobby from url path if available
-    console.log('join lobby from url path if available');
     let player = socket.player;
     let url = new URL(socket.request.headers.referer);
     let path = url.pathname;
@@ -75,13 +75,14 @@ io.use((socket, next) => {
     
     if (matches) {
         let joinCode = matches[1];
-        console.log(matches);
         if (lobby.roomCodes.has(joinCode)) {
             let room = lobby.roomFromCode(joinCode);
-            if (player.inRoom) {
-                player.leaveRoom();
+            if (!room.full && room.size < 3) {
+                if (player.inRoom) {
+                    player.leaveRoom();
+                }
+                player.joinRoom(room);
             }
-            player.joinRoom(room);
         }
     }
     return next();

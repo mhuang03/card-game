@@ -71,14 +71,23 @@
     }
     // listen for and render game state updates
     socket.on('gameStateUpdate', handleGameResponse);
+
+    // card selection system
+    window.isSelecting = false;
+    window.selection = [];
+    $('body').mousedown(() => {
+        window.isSelecting = true;
+    });
+    $('body').on('mouseup mouseleave', () => {
+        window.isSelecting = false;
+        window.selection = [];
+    });
     
     
     
     /************************/
     /*    Initialization    */
     /************************/
-    let roomState = undefined;
-    let gameState = undefined;
     // request the initial room and game state
     socket.emit('roomStateRequest', (res) => {
         handleRoomResponse(res, (res) => {
@@ -114,7 +123,7 @@
                 });
             }
         });
-    $('#myCards > input[type="button"]')
+    $('#playCards')
         .click(() => {
             let selected = [];
             $('#myCards > ul').find('li>strong>label').each((idx, el) => {
@@ -123,8 +132,29 @@
                     suit: el.attributes.suit.value
                 });
             });
-            socket.emit('playCards', selected, handleRoomResponse);
+            socket.emit('playCards', selected, handleGameResponse);
         });
+    
+    // make name editable and prevent enter
+    $('#playerName > div > span').focusout(() => {
+        socket.emit('setName', $('#playerName > div > span').text(), handleRoomResponse);
+    });
+    $('#playerName > div > span').keypress((e) => {
+        if (e.key == 'Enter' || e.keyCode == 13) {
+            e.preventDefault();
+            $('#playerName > div > span').focusout();
+            $('#playerName > div > span').blur();
+        }
+    });
+    $('#playerName > div > span').click(() => {
+        $('#playerName > div > span').select();
+    });
+
+    // join code copy to clipboard
+    $('#joinCode').click(() => {
+        let code = $('#joinCode > div > span.joinCode').text();
+        navigator.clipboard.writeText(code);
+    });
 
 
 
@@ -133,24 +163,212 @@
     /*******************/
     const renderRoom = (roomState, errorMsg) => {
         console.log(roomState);
-        $('#playerName > span').text(roomState.playerName);
+        $('#playerName > div > span').text(roomState.playerName);
         if (roomState.inRoom) {
             let roomInfo = roomState.roomInfo;
-            $('#joinCode > span').text(roomInfo.joinCode);
+            $('#joinCode > div > span.joinCode').text(roomInfo.joinCode);
+            $('#lobbyList').removeClass('hidden');
             $('#lobbyList > .player')
                 .each((idx, item) => {
                     let $player = $(item);
                     let playerNumber = $player.attr('playerNumber');
                     let playerInfo = roomInfo.players[playerNumber];
                     if (playerInfo) {
+                        $player.removeClass('hidden');
                         $player.find('.name').text(playerInfo.name);
                         $player.find('.score').text(playerInfo.score);
+                        if (playerNumber == roomInfo.host.playerNumber) {
+                            $player.addClass('host');
+                        }
+                        if (roomInfo.lastWinner) {
+                            if (playerNumber == roomInfo.lastWinner.playerNumber) {
+                                $player.addClass('winner');
+                            }
+                        }
+                    } else {
+                        $player.addClass('hidden');
+                        $player.find('.name').text('');
+                        $player.find('.score').text('');
+                        $player.removeClass('host');
                     }
                 });
+
+            if (!roomInfo.inGame) {
+                // clear game area
+                $('#opponentCards > .opponent > ul')
+                    .each((idx, item) => {
+                        $(item).empty().removeClass('fadeCards');
+                        $(item).siblings().empty().removeClass('underline');
+                    });
+                $('#myCards > ul').empty().removeClass('fadeCards');
+                $('#lastCombo > ul').empty().removeClass('fadeCards');
+                $('#playCards').addClass('clear');
+                $('#app').addClass('preGame');
+            } else {
+                $('#app').removeClass('preGame');
+            }
+
+            if (!roomInfo.inGame && roomInfo.host.playerNumber == roomInfo.self.playerNumber && roomInfo.full) {
+                $('#startGame').removeClass('hidden');
+            } else {
+                $('#startGame').addClass('hidden');
+            }
+            
+            $('#createRoom').addClass('hidden');
+            $('#joinRoom').addClass('hidden');
+            $('#leaveRoom').removeClass('hidden');
+        } else {
+            $('#joinCode > div > span.joinCode').text('');
+            $('#lobbyList').addClass('hidden');
+            $('#lobbyList > .player')
+                .each((idx, item) => {
+                    let $player = $(item);
+                    $player.find('.name').text('');
+                    $player.find('.score').text('');
+                    $player.removeClass('host');
+                });
+            
+            $('#createRoom').removeClass('hidden');
+            $('#joinRoom').removeClass('hidden');
+            $('#startGame').removeClass('hidden');
+            $('#leaveRoom').addClass('hidden');
+            $('#startGame').addClass('hidden');
+            $('#playCards').addClass('clear');
+            $('#app').addClass('preGame');
+        }
+        $('#setName').removeClass('hidden');
+
+        if (errorMsg) {
+            console.log(errorMsg);
         }
     }
     const renderGame = (gameState, errorMsg) => {
         console.log(gameState);
+        $('#app').removeClass('preGame');
+        
+        let self = gameState.self.playerNumber;
+        let opponents = [(self + 1) % 3, (self + 2) % 3];
+        let turn = gameState.currentPlayer.playerNumber;
+
+        let players = gameState.players;
+        $('#opponentCards > .opponent > ul')
+            .each((idx, item) => {
+                let $op = $(item);
+                let op = players[opponents[$op.parent().attr('number')]];
+                let $newOp = $op.clone().empty();
+                if (op.cardsVisible) {
+                    $newOp.addClass('hand');
+                    $newOp.removeClass('deck');
+                    
+                    for (let i = 0; i < op.length; i++) {
+                        let card = op.hand[i];
+                        let $li = new App.Cards.DisplayCard(card).$li;
+                        $li.appendTo($newOp);
+                    }
+                } else {
+                    $newOp.removeClass('hand');
+                    $newOp.addClass('deck');
+                    
+                    for (let i = 0; i < op.length; i++) {
+                        let $li = new App.Cards.DisplayCardBack().$li;
+                        $li.appendTo($newOp);
+                    }
+                }
+                
+                $op.siblings('span.cardCount').text(op.length);
+                if (op.length == 1) {
+                    $op.siblings('span.cardCount').addClass('singular');
+                } else {
+                    $op.siblings('span.cardCount').removeClass('singular');
+                }
+                $op.siblings('span.opponentName').text(op.name);
+
+                if (op == players[turn]) {
+                    $newOp.removeClass('fadeCards');
+                    $op.siblings('span.opponentName').addClass('underline');
+                } else {
+                    $newOp.addClass('fadeCards');
+                    $op.siblings('span.opponentName').removeClass('underline');
+                }
+                $op.replaceWith($newOp);
+            });
+
+        let myCards = players[self].hand;
+        let $newCards = $('#myCards > ul').clone().empty();
+        for (let card of myCards) {
+            if (gameState.winner) {
+                let $li = new App.Cards.DisplayCard(card).$li;
+                $li.appendTo($newCards);
+                continue;
+            }
+            
+            let $li = new App.Cards.Card(card).$li;
+            $li.appendTo($newCards);
+
+            let $card = $li.children().first();
+            $card.on('change', () => {
+                if ($card.parent().prop('tagName') == 'STRONG') {
+                    $card.unwrap();
+                } else {
+                    $card.wrap('<strong></strong>');
+                }
+            });
+            
+            $card.on('mouseenter mouseleave', () => {
+                if (!window.isSelecting || window.selection.includes($card)) {
+                    return;
+                }
+                $card.click();
+                window.selection.push($card);
+            });
+    
+            $card.on('mousedown', () => {
+                if (window.selection.includes($card)) {
+                    return;
+                }
+                $card.click();
+                window.selection.push($card);
+            });
+        }
+        $('#myCards > ul').replaceWith($newCards);
+        if (turn != self) {
+            $newCards.addClass('fadeCards');
+            $('#playCards').addClass('clear');
+        } else {
+            $newCards.removeClass('fadeCards');
+            if (!gameState.winner) {
+                $('#playCards').removeClass('clear');
+            }
+        }
+
+        if (gameState.previousCombo) {
+            let $newCombo = $('#lastCombo > ul').clone().empty();
+            for (let card of gameState.previousCombo) {
+                let $li = new App.Cards.DisplayCard(card).$li;
+                $li.appendTo($newCombo);
+            }
+            $('#lastCombo > ul').replaceWith($newCombo);
+        }
+
+        if (gameState.newTrick) {
+            $('#lastCombo > ul').addClass('fadeCards');
+        } else {
+            $('#lastCombo > ul').removeClass('fadeCards');
+        }
+
+        if (gameState.winner) {
+            $('#opponentCards > .opponent > ul')
+                .each((idx, item) => {
+                    $(item).removeClass('fadeCards');
+                    $(item).siblings().removeClass('underline');
+                });
+            $('#myCards > ul').removeClass('fadeCards');
+            $('#lastCombo > ul').removeClass('fadeCards');
+        }
+
+        if (errorMsg) {
+            console.log(errorMsg);
+        }
     }
 
     // log all events

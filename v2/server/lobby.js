@@ -65,9 +65,7 @@ class LobbyManager {
         player.on('disconnect', () => {
             setTimeout(() => {
                 if (player.inRoom) {
-                    if (player.room.isEmpty()) {
-                        this.closeRoom(player.room);
-                    }
+                    player.leaveRoom();
                 }
             }, 120000);
         });
@@ -93,7 +91,7 @@ class LobbyManager {
                 return;
             }
 
-            let room = this.roomFromCode(code);
+            let room = this.roomFromCode(code.toUpperCase());
             if (!room) {
                 callback(player.roomResponse('No such room exists.'));
                 return;
@@ -146,8 +144,17 @@ class LobbyManager {
 
         player.on('setName', (name, callback) => {
             if (name.trim() == '') {
-                callback(player.roomResponse('Please enter a non-empty room name.'));
+                callback(player.roomResponse('Please enter a non-empty name.'));
                 return;
+            }
+
+            if (player.inRoom) {
+                for (let p of player.room.players) {
+                    if (p != player && p.name == name) {
+                        callback(player.roomResponse('Please choose a unique name.'));
+                        return;
+                    }
+                }
             }
 
             player.setName(name);
@@ -175,13 +182,22 @@ class Room {
     }
 
     startGame() {
-        this.game = new CardGame(this);
+        if (this.lastWinner) {
+            this.game = new CardGame(this, this.lastWinner);
+        } else {
+            this.game = new CardGame(this);
+        }
         this.inGame = true;
     }
 
     endGame() {
+        for (let p of this.players) {
+            p.removeAllListeners('playCards');
+            p.removeAllListeners('gameStateRequest');
+        }
         this.game = undefined;
         this.inGame = false;
+        this.emitRoomStateUpdate();
     }
 
     setName(name) {
@@ -204,18 +220,25 @@ class Room {
         this.scores.set(player, 0);
         this.size = this.players.length;
         this.updatePlayerNumbers();
-        this.emitRoomStateUpdate();
     }
 
     removePlayer(player) {
         this.players = this.players.filter((item) => item !== player);
         this.scores.delete(player);
         this.size = this.players.length;
+        
+        if (player.isHost && this.size > 0) {
+            this.setHost(this.players[0]);
+        }
+
+        if (this.lastWinner == player) {
+            this.lastWinner = undefined;
+        }
+        
         if (this.isEmpty()) {
             this.manager.closeRoom(this);
         } else {
             this.updatePlayerNumbers();
-            this.emitRoomStateUpdate();
         }
     }
 
@@ -224,6 +247,7 @@ class Room {
             let p = this.players[i];
             p.setNumber(i);
         }
+        this.emitRoomStateUpdate();
     }
 
     isEmpty() {
@@ -264,23 +288,29 @@ class Room {
                 score: this.scores.get(p)
             });
         }
+        if (this.lastWinner) {
+            info['lastWinner'] = {
+                playerNumber: this.lastWinner.playerNumber,
+                name: this.lastWinner.name
+            };
+        }
         return info;
     }
 
     emitRoomStateUpdate() {
         for (let p of this.players) {
-            let res = {
-                success: true,
-                errorMsg: '',
-                roomState: {
-                    inRoom: true,
-                    playerName: p.name,
-                }
-            };
             if (p.inRoom) {
+                let res = {
+                    success: true,
+                    errorMsg: '',
+                    roomState: {
+                        inRoom: p.inRoom,
+                        playerName: p.name,
+                    }
+                };
                 res.roomState['roomInfo'] = this.getInfo(p);
+                p.emit('roomStateUpdate', res);
             }
-            p.emit('roomStateUpdate', res);
         }
     }
 
@@ -296,20 +326,46 @@ class Room {
         this.emitRoomStateUpdate();
     }
 
-    scoreGame(winner) {
+    scoreGame(winner, finalCombo, lastPlayer, previousCombo) {
+        this.lastWinner = winner;
         let scores = this.scores;
+        
+        let winnerIndex = winner.playerNumber;
+        let lastPlayerThrew = false;
+        finalCombo.value -= 1;
+        if (finalCombo.name == 'Single' && 
+            previousCombo.name == 'Single' &&
+            lastPlayer.hand.canPlayOn(finalCombo)) {
+                lastPlayerThrew = true;
+            }
+        
+
+        console.log(lastPlayer.hand);
+        console.log(finalCombo);
+        console.log(previousCombo);
+        console.log(lastPlayer.hand.canPlayOn(finalCombo));
+        console.log(lastPlayerThrew);
+        
         let total = 0;
         for (let p of this.players) {
-            if (p != player) {
+            if (p != winner) {
                 let count = p.hand.size;
-                total += count;
+                let score = 0;
                 if (count > 1) {
-                    if (count < 16) {
-                        scores.set(p, scores.get(p) - count);
+                    score += count;
+                }
+                if (count == 16) {
+                    score *= 2;
+                }
+                if (lastPlayerThrew) {
+                    if (p == lastPlayer) {
+                        score *= 2;
                     } else {
-                        scores.set(p, scores.get(p) - 2*count);
+                        score = 0;
                     }
                 }
+                scores.set(p, scores.get(p) - score);
+                total += score;
             }
         }
         scores.set(winner, scores.get(winner) + total);
@@ -317,6 +373,7 @@ class Room {
     }
 }
 
+const animals = ["alligator","anteater","armadillo","axolotl","badger","bat","beaver","buffalo","camel","capybara","chameleon","cheetah","chinchilla","chipmunk","chupacabra","coyote","crow","dingo","dinosaur","dog","dolphin","dragon","duck","elephant","ferret","fox","frog","giraffe","gopher","grizzly","hedgehog","hippo","hyena","jackal","ibex","ifrit","iguana","koala","kraken","lemur","leopard","liger","lion","llama","manatee","mink","monkey","narwhal","nyan cat","octopus","orangutan","otter","panda","penguin","platypus","python","rabbit","raccoon","rhino","sheep","shrew","skunk","squirrel","tiger","turtle","unicorn","walrus","wolf","wombat"]
 
 class Player {
     constructor(manager, socket, name){
@@ -329,14 +386,16 @@ class Player {
         if (name) {
             this.name = name;
         } else {
-            this.name = `Player ${this.token.substring(0, 5)}`;
+            this.name = animals[Math.floor(Math.random() * animals.length)];
         }
     }
 
     on(...args) { return this.socket.on(...args); }
+    off(...args) { return this.socket.off(...args); }
     emit(...args) { return this.socket.emit(...args); }
     join(...args) { return this.socket.join(...args); }
     leave(...args) { return this.socket.leave(...args); }
+    removeAllListeners(...args) { return this.socket.removeAllListeners(...args); }
 
     changeSocket(socket) {
         this.socket.removeAllListeners();
@@ -349,6 +408,16 @@ class Player {
 
     joinRoom(room) {
         this.room = room;
+        let done = false;
+        while (!done) {
+            done = true;
+            for (let p of room.players) {
+                if (p.name == this.name) {
+                    done = false;
+                    this.setName(this.name + '^2');
+                }
+            }
+        }
         room.addPlayer(this);
         this.inRoom = true;
     }
@@ -368,8 +437,14 @@ class Player {
     }
 
     setName(name) {
-        this.name = name;
-        this.room.emitRoomStateUpdate();
+        if (name !== this.name) {
+            this.name = name;
+            if (this.inRoom) {
+                this.room.emitRoomStateUpdate();
+            } else {
+                this.emit('roomStateUpdate', this.roomResponse());
+            }
+        }
     }
 
     roomResponse(errorMsg = '') {

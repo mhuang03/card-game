@@ -15,6 +15,13 @@
             Spades: 'spades'
         }
 
+        unicodeMap = {
+            Clubs: '&#9827;',
+            Diamonds: '&#9830;',
+            Hearts: '&#9829;',
+            Spades: '&#9824;'
+        }
+
         let $li = $('<li></li>');
         
         let $label = $('<label></label>', {
@@ -24,6 +31,10 @@
             suit: suit
         });
 
+        let $info = $('<div></div>', {
+            class: `info`,
+        });
+
         let $rank = $('<span></span>', {
             class: 'rank',
             text: rank
@@ -31,7 +42,7 @@
 
         let $suit = $('<span></span>', {
             class: 'suit'
-        }).html(`&${suitMap[suit]};`);
+        }).html(unicodeMap[suit]);
 
         let $checkbox = $('<input></input>', {
             type: 'checkbox',
@@ -41,9 +52,10 @@
             class: 'hidden'
         });
 
-        $label.append($rank);
-        $label.append($suit);
-        $label.append($checkbox);
+        $info.append($rank);
+        $info.append($suit);
+        $info.append($checkbox);
+        $label.append($info);
         $li.append($label);
         this.$li = $li;
     }
@@ -61,12 +73,23 @@
             Spades: 'spades'
         }
 
+        unicodeMap = {
+            Clubs: '&#9827;',
+            Diamonds: '&#9830;',
+            Hearts: '&#9829;',
+            Spades: '&#9824;'
+        }
+
         let $li = $('<li></li>');
         
         let $div = $('<div></div>', {
             class: `card rank-${rank.toLowerCase()} ${suitMap[suit]}`,
             rank: rank,
             suit: suit
+        });
+
+        let $info = $('<div></div>', {
+            class: `info`,
         });
 
         let $rank = $('<span></span>', {
@@ -76,10 +99,11 @@
 
         let $suit = $('<span></span>', {
             class: 'suit'
-        }).html(`&${suitMap[suit]};`);
+        }).html(unicodeMap[suit]);
 
-        $div.append($rank);
-        $div.append($suit);
+        $info.append($rank);
+        $info.append($suit);
+        $div.append($info);
         $li.append($div);
         this.$li = $li;
     }
@@ -94,8 +118,10 @@
         this.$li = $li;
     }
 
-    App.Card = Card;
-    App.DisplayCard = DisplayCard;
-    App.DisplayCardBack = DisplayCardBack;
+    let Cards = {};
+    Cards.Card = Card;
+    Cards.DisplayCard = DisplayCard;
+    Cards.DisplayCardBack = DisplayCardBack;
+    App.Cards = Cards;
     window.App = App;
 })(window);

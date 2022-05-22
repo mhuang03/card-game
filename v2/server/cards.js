@@ -316,3 +316,4 @@ class Combo {
 exports.Deck = Deck;
 exports.Hand = Hand;
 exports.Combo = Combo;
+exports.Card = Card;

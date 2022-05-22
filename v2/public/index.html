@@ -7,68 +7,82 @@
     <meta name="author" content="Michael Huang">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="css/cards.css">
+    <link rel="stylesheet" href="css/simpleCards.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <h3 id="titleText">
-        Card Game
-    </h3>
-    <div id="app">
-        <div id="lobby">
-            <div id="lobbyInfo">
-                <div id="joinCode">
-                    <span></span>
-                </div>
-                <div id="playerName">
-                    <span></span>
-                </div>
+    <div id="header">
+        <div id="titleText">
+            <h3>Card Game</h3>
+        </div>
+        <div id="playerName">
+            <div>
+                <span contenteditable autocapitalize="false" 
+                    autocorrect="false" autocomplete="off" ></span>
             </div>
-            <div id="lobbyList">
-                <div id="player-0" playerNumber="0" class="player">
+        </div>
+        <div id="joinCode">
+            <div>
+                <span class="tooltip">click to copy</span>
+                <span class="joinCode"></span>
+            </div>
+        </div>
+    </div>
+    <div id="app" class="preGame">
+        <div id="lobby">
+            <div id="lobbyList" class="hidden">
+                <div id="player-0" playerNumber="0" class="player hidden">
                     <span class="name"></span>
                     <span class="score"></span>
                 </div>
-                <div id="player-1" playerNumber="1" class="player">
+                <div id="player-1" playerNumber="1" class="player hidden">
                     <span class="name"></span>
                     <span class="score"></span>
                 </div>
-                <div id="player-2" playerNumber="2" class="player">
+                <div id="player-2" playerNumber="2" class="player hidden">
                     <span class="name"></span>
                     <span class="score"></span>
                 </div>
             </div>
             <div id="lobbyFunctions">
-                <div id="createRoom" event="createRoom" class="lobbyFunction">
+                <div id="createRoom" event="createRoom" class="lobbyFunction hidden">
                     <input type="button" value="Create Room">
                     <input type="text" autocomplete="off" autocorrect="off">
                 </div>
-                <div id="joinRoom" event="joinRoom" class="lobbyFunction">
+                <div id="joinRoom" event="joinRoom" class="lobbyFunction hidden">
                     <input type="button" value="Join Room">
                     <input type="text" autocomplete="off" autocorrect="off">
                 </div>
-                <div id="leaveRoom" event="leaveRoom" class="lobbyFunction">
+                <div id="leaveRoom" event="leaveRoom" class="lobbyFunction hidden">
                     <input type="button" value="Leave Room">
                 </div>
-                <div id="setName" event="setName" class="lobbyFunction">
-                    <input type="button" value="Set Name">
-                    <input type="text" autocomplete="off" autocorrect="off">
+                <div id="startGame" event="startGame" class="lobbyFunction hidden">
+                    <input type="button" value="Start Game">
                 </div>
             </div>
         </div>
-        <div id="game" class="playingCards simpleCards">
-            <div id="opponentCards" class="opponent">
-                <div id="opponent-0">
-                    <ul class="deck"></ul>
+        <div id="game">
+            <div id="otherCards">
+                <div id="opponentCards">
+                    <div id="opponent-0" number="0" class="opponent">
+                        <span class="opponentName"></span>
+                        <span class="cardCount"></span>
+                        <ul class="deck"></ul>
+                    </div>
+                    <div id="opponent-1" number="1" class="opponent">
+                        <span class="opponentName"></span>
+                        <span class="cardCount"></span>
+                        <ul class="deck"></ul>
+                    </div>
                 </div>
-                <div id="opponent-1" class="opponent">
-                    <ul class="deck"></ul>
+                <div id="lastCombo">
+                    <ul class="hand"></ul>
                 </div>
             </div>
             <div id="myCards">
                 <ul class="hand"></ul>
-                <input type="button" value="Play Cards">
+                <input id="playCards" type="button" class="clear" value="Play Cards">
             </div>
         </div>
     </div>

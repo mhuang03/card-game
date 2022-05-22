@@ -1,12 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
-body {
+html, body {
+    height: 100%;
     font-family: 'Lato', sans-serif;
-    padding: 2em;
+}
+
+body {
+    cursor: default;
+    display: flex;
+    flex-direction: column;
 }
 
 .hidden {
     display: none;
+    visibility: hidden;
+}
+
+.clear {
     visibility: hidden;
 }
 
@@ -38,21 +48,223 @@ body {
 }
 
 .player {
-    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1.5px solid black;
+    border-radius: 5px;
+    padding: 3px;
+    margin-bottom: 20px;
+}
+
+.player span.name {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.player span.score:before {
+    content: "Score: ";
+}
+
+.host {
+    text-shadow: 1px 1px #f3b219;
+}
+
+.host span.name:after {
+    content: "\01F451";
+}
+
+.winner span.name:after {
+    content: "\01F3C6"
+}
+
+.host.winner span.name:after {
+    content: "\01F451\01F3C6"
+}
+
+.underline {
+    text-decoration: underline;
 }
 
 .opponent {
-    
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.opponent span.opponentName {
+    font-weight:bold;
+}
+.opponent span.cardCount {
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+.opponent span.cardCount:after {
+    content: " Cards";
+}
+.opponent span.cardCount.singular:after {
+    content: " Card";
 }
 
-#myCards {
-    
+.fadeCards {
+    filter: brightness(75%);
+}
+
+#lobby {
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1.5px solid black;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+#lobbyList,
+#lobbyFunctions {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+}
+
+#lobbyFunctions {
+    justify-content: flex-end;
+}
+
+#lobbyFunctions input {
+    width: 100%;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
 }
 
 #opponentCards {
-    
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
+#otherCards,
 #game {
-    
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#app {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex: 1;
+}
+
+#lastCombo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#myCards {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#playCards {
+    width: min-content;
+}
+
+#header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #006ec2;
+    color: white;
+    padding: 5px;
+}
+
+#titleText {
+    flex: 1;
+    padding: 5px;
+}
+
+#titleText h3 {
+    float: left;
+    margin: auto;
+    margin-left: 0;
+    font-size: 20px;
+}
+
+#joinCode {
+    flex: 1;
+    padding: 5px;
+}
+
+#joinCode div {
+    float: right;
+    cursor: pointer;
+    margin: auto;
+    font-size: 20px;
+}
+
+#joinCode div .joinCode {
+    font-weight: bold;
+}
+
+#playerName {
+    padding: 5px;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#playerName span {
+    margin: auto;
+}
+
+#playerName span[contenteditable] {
+    outline: 0px solid transparent;
+}
+
+#playerName:hover,
+#playerName:active,
+#playerName:focus {
+    border: 2px dashed black;
+}
+
+.tooltip {
+    visibility: hidden;
+    display: none;
+    background-color: #4a4a4a;
+    color: white;
+    border-radius: 5px;
+    padding: 2px
+}
+
+#joinCode div:hover .tooltip {
+    visibility: visible;
+    display: inline;
+}
+
+#app.preGame #lobby {
+    width: 100%;
+}
+
+#app.preGame #game {
+    width: 0;
+    display: none;
+    visibility: hidden;
 }

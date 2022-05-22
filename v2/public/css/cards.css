@@ -50,9 +50,14 @@
     background-color: #ccc;
     background-repeat: repeat;
     background-image: url(data:image/gif;base64,R0lGODlhJAAkAJEAAOjFsezdztOKbL5QKCH5BAAAAAAALAAAAAAkACQAAAL/HC4RAqm/mmLHyHmAbczB11Ea8ombJKSgKo6Z17pXFznmS1JptiX0z3vVhpEKDoUIkoa0olGIUeZUk1RI6Yn2mh/FDAt6frOrRRTqXPpsVLYugzxaVy+YcBdnoWPZOT0E4eckQtZFZBjWoHixQFWl6Nhol6R2p1Okt5TGaEWZA6fjiMdhZgPHeWrTWGVq+jTZg1HYyAEWKLYzmyiGKoUimilz+YYryyTlg5RcDJSAbNx0Q7lMcbIGEyzTK8zVdfVaImzs/QV+prYqWWW2ObkoOApM/Em/rUlIm7fijs8a2EEKEaZ3AsMUgneEU6RcpJbZ27aGHkAO2Ors8xQH1IR0Bn5YnOtVAAA7); /* image is "Pattern 069" from http://www.squidfingers.com/patterns/ */
+    background-position:  2.5px 0, 2.5px 0, 0 0, 0 0;
+    background-size: 5px 5px;
+    background-image:  linear-gradient(135deg, #f74545 25%, transparent 25%), linear-gradient(225deg, #f74545 25%, transparent 25%), linear-gradient(45deg, #f74545 25%, transparent 25%), linear-gradient(315deg, #f74545 25%, #ffffff 25%);
+    /*
     background-image: -moz-repeating-linear-gradient(34% 6% 135deg,#0F1E59, #75A1BF, #3E3E63 50%);
     background-image: -webkit-gradient(radial, center center, 20, center center, 80, from(#3c3), color-stop(0.4, #363), to(#030));
-    /* yes, it's intentional that Mozilla, Webkit, Opera and IE all will get different backgrounds ... why not? :) */
+    
+    yes, it's intentional that Mozilla, Webkit, Opera and IE all will get different backgrounds ... why not? :) */
 }
 
 /* suit colours
@@ -465,7 +470,7 @@
     clear: both;
 }
 .playingCards ul.hand {
-    margin-bottom: 3.5em;
+    margin-bottom: 0.5em;
 }
 .playingCards ul.table li,
 .playingCards ul.hand li,

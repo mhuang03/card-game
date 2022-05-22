@@ -1,7 +1,7 @@
-const {Deck, Hand, Combo} = require('./cards.js');
+const { Deck, Hand, Combo, Card } = require('./cards.js');
 
 class CardGame {
-    constructor(room) {
+    constructor(room, lastWinner) {
         this.room = room;
         let deck = new Deck();
 
@@ -12,7 +12,7 @@ class CardGame {
                 let card = deck.pop()
                 p.hand.push(card);
 
-                if (card.rank == '3' && card.suit == 'Hearts') {
+                if (!lastWinner && card.rank == '3' && card.suit == 'Hearts') {
                     this.currentPlayer = p;
                     this.turn = p.playerNumber;
                 }
@@ -20,6 +20,10 @@ class CardGame {
             p.hand.sort();
             
             this.setupListeners(p);
+        }
+        if (lastWinner) {
+            this.currentPlayer = lastWinner;
+            this.turn = lastWinner.playerNumber;
         }
         this.newTrick = true;
         room.emitRoomStateUpdate();
@@ -72,11 +76,12 @@ class CardGame {
             }
             
             this.newTrick = false;
+            this.secondToLastCombo = this.previousCombo;
+            this.secondToLastPlayer = this.previousPlayer
             this.previousCombo = combo;
             this.previousPlayer = player;
             
             player.hand.play(combo);
-            this.advanceTurn();
 
             if (combo.name == 'Bomb') {
                 room.scoreBomb(player);
@@ -87,7 +92,10 @@ class CardGame {
                     name: player.name,
                     playerNumber: player.playerNumber
                 }
+                room.scoreGame(player, combo, this.secondToLastPlayer, this.secondToLastCombo);
                 room.endGame();
+            } else {
+                this.advanceTurn();
             }
             
             callback(this.gameResponse(player));
@@ -111,8 +119,6 @@ class CardGame {
         }
         if (this.currentPlayer == this.previousPlayer) {
             this.newTrick = true;
-            this.previousCombo = undefined;
-            this.previousPlayer = undefined;
         }
     }
 
@@ -144,6 +150,10 @@ class CardGame {
                 players: []
             }
         };
+
+        if (this.previousCombo) {
+            res.gameState['previousCombo'] = this.previousCombo.toObjArr();
+        }
 
         for (let p of this.room.players) {
             let playerInfo = {
