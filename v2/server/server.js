@@ -17,9 +17,6 @@ const port = process.env.PORT || 3000;
 let app = express();
 let server = http.createServer(app);
 let io = socketIO(server);
-app.use((req, res, next) => {
-    next();
-});
 app.use(express.static(publicPath));
 
 app.get('/debug', (req, res) => {
@@ -40,7 +37,6 @@ app.get('/:joinCode', (req, res) => {
 });
 
 server.listen(port, () => {
-    
     console.log(`Server is up on port ${port}.`);
 });
 
@@ -96,7 +92,6 @@ io.on('connection', (socket) => {
             player.emit('gameStateUpdate', player.room.game.gameResponse());
         }
     }
-    console.log(`user joined with id ${player.id} and token ${player.token}`)
     
     lobby.setupListeners(player);
     if (player.inRoom) {

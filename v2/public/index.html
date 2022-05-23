@@ -7,7 +7,8 @@
     <meta name="author" content="Michael Huang">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="css/simpleCards.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+    <link rel="stylesheet" href="css/cards.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -78,9 +79,9 @@
                         <ul class="deck"></ul>
                     </div>
                 </div>
-                <div id="lastCombo">
-                    <ul class="hand"></ul>
-                </div>
+            </div>
+            <div id="lastCombo">
+                <ul class="hand"></ul>
             </div>
             <div id="myCards">
                 <ul class="hand"></ul>
@@ -88,7 +89,11 @@
             </div>
         </div>
     </div>
+    <div id="errorModal" class="modal">
+        <p id="errorMsg"></p>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/cards.js"></script>
     <script src="js/main.js"></script>

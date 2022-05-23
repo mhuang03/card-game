@@ -174,7 +174,6 @@ class LobbyManager {
             for (let char of [...name]) {
                 let charCode = char.charCodeAt(0);
                 if ((charCode > 126 || charCode < 32) && !(charCode == 160)) {
-                    console.log(charCode);
                     callback(player.roomResponse('ASCII characters only.'));
                     return;
                 }
@@ -362,13 +361,6 @@ class Room {
             lastPlayer.hand.canPlayOn(finalCombo)) {
                 lastPlayerThrew = true;
             }
-        
-
-        console.log(lastPlayer.hand);
-        console.log(finalCombo);
-        console.log(previousCombo);
-        console.log(lastPlayer.hand.canPlayOn(finalCombo));
-        console.log(lastPlayerThrew);
         
         let total = 0;
         for (let p of this.players) {

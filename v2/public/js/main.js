@@ -245,7 +245,8 @@
         $('#setName').removeClass('hidden');
 
         if (errorMsg) {
-            console.log(errorMsg);
+            $('#errorMsg').text(errorMsg);
+            $('#errorModal').modal();
         }
     }
     const renderGame = (gameState, errorMsg) => {
@@ -376,7 +377,8 @@
         }
 
         if (errorMsg) {
-            console.log(errorMsg);
+            $('#errorMsg').text(errorMsg);
+            $('#errorModal').modal();
         }
     }
 
