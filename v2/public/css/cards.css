@@ -5,11 +5,11 @@
     width: 3.3em;
     height: 4.6em;
     border: 0.05em solid #666;
-    border-radius: .3em;
-    -moz-border-radius: .3em;
-    -webkit-border-radius: .3em;
-    -khtml-border-radius: .3em;
-    padding: .25em;
+    border-radius: 0.3em;
+    -moz-border-radius: 0.3em;
+    -webkit-border-radius: 0.3em;
+    -khtml-border-radius: 0.3em;
+    padding: 0.25em;
     margin: 0;
     text-align: center;
     font-size: 1.4em;
@@ -17,15 +17,15 @@
     font-family: Bayon, sans-serif;
     position: relative;
     background-color: #fff;
-    -moz-box-shadow: .2em .2em .5em #3339;
-    -webkit-box-shadow: .2em .2em .5em #3339;
-    box-shadow: .2em .2em .5em #3339;
+    -moz-box-shadow: 0.2em 0.2em 0.5em #3339;
+    -webkit-box-shadow: 0.2em 0.2em 0.5em #3339;
+    box-shadow: 0.2em 0.2em 0.5em #3339;
 }
 
 ul.deck .card {
-    -moz-box-shadow: .2em .2em .5em #3333;
-    -webkit-box-shadow: .2em .2em .5em #3333;
-    box-shadow: .2em .2em .5em #3333;
+    -moz-box-shadow: 0.2em 0.2em 0.5em #3333;
+    -webkit-box-shadow: 0.2em 0.2em 0.5em #3333;
+    box-shadow: 0.2em 0.2em 0.5em #3333;
 }
 
 strong .card {
@@ -37,9 +37,11 @@ strong .card {
     background-color: #ccc;
     background-repeat: repeat;
     background-image: url(data:image/gif;base64,R0lGODlhJAAkAJEAAOjFsezdztOKbL5QKCH5BAAAAAAALAAAAAAkACQAAAL/HC4RAqm/mmLHyHmAbczB11Ea8ombJKSgKo6Z17pXFznmS1JptiX0z3vVhpEKDoUIkoa0olGIUeZUk1RI6Yn2mh/FDAt6frOrRRTqXPpsVLYugzxaVy+YcBdnoWPZOT0E4eckQtZFZBjWoHixQFWl6Nhol6R2p1Okt5TGaEWZA6fjiMdhZgPHeWrTWGVq+jTZg1HYyAEWKLYzmyiGKoUimilz+YYryyTlg5RcDJSAbNx0Q7lMcbIGEyzTK8zVdfVaImzs/QV+prYqWWW2ObkoOApM/Em/rUlIm7fijs8a2EEKEaZ3AsMUgneEU6RcpJbZ27aGHkAO2Ors8xQH1IR0Bn5YnOtVAAA7); /* image is "Pattern 069" from http://www.squidfingers.com/patterns/ */
-    background-position:  2.5px 0, 2.5px 0, 0 0, 0 0;
+    background-position: 2.5px 0, 2.5px 0, 0 0, 0 0;
     background-size: 5px 5px;
-    background-image:  linear-gradient(135deg, #f74545 25%, transparent 25%), linear-gradient(225deg, #f74545 25%, transparent 25%), linear-gradient(45deg, #f74545 25%, transparent 25%), linear-gradient(315deg, #f74545 25%, #ffffff 25%);
+    background-image: linear-gradient(135deg, #f74545 25%, transparent 25%),
+        linear-gradient(225deg, #f74545 25%, transparent 25%), linear-gradient(45deg, #f74545 25%, transparent 25%),
+        linear-gradient(315deg, #f74545 25%, #ffffff 25%);
 }
 
 .card.diams {
@@ -70,7 +72,7 @@ strong .card {
     margin-bottom: 0.5em;
 }
 
-.card:after{
+.card:after {
     position: absolute;
     font-family: Arial, sans-serif;
     font-size: 80px;
@@ -80,17 +82,17 @@ strong .card {
     right: 1px;
     bottom: 2px;
 }
-.card.diams:after{
-    content: "\2666";
+.card.diams:after {
+    content: '\2666';
 }
-.card.hearts:after{
-    content: "\2665";
+.card.hearts:after {
+    content: '\2665';
 }
-.card.spades:after{
-    content: "\2660";
+.card.spades:after {
+    content: '\2660';
 }
-.card.clubs:after{
-    content: "\2663";
+.card.clubs:after {
+    content: '\2663';
 }
 
 ul.table,
@@ -101,7 +103,7 @@ ul.deck {
     margin: 0 0 0.5em 0;
     position: relative;
     clear: both;
-    border-radius: .3em;
+    border-radius: 0.3em;
 }
 ul.hand {
     margin-bottom: 0.5em;

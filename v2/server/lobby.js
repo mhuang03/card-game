@@ -2,8 +2,6 @@ const { CardGame } = require('./game.js');
 const uuid = require('uuid').v4;
 const rstring = require('randomstring').generate;
 
-
-
 class LobbyManager {
     constructor() {
         this.rooms = new Map();
@@ -17,7 +15,7 @@ class LobbyManager {
         if (roomName) {
             room.setName(roomName);
         }
-        
+
         this.rooms.set(room.id, room);
         this.roomCodes.set(room.joinCode, room);
 
@@ -30,13 +28,13 @@ class LobbyManager {
     }
 
     generateJoinCode() {
-        let joinCode = ''
+        let joinCode = '';
         while (this.roomCodes.has(joinCode) || joinCode === '') {
             joinCode = rstring({
                 length: 5,
                 readable: true,
                 charset: 'alphanumeric',
-                capitalization: 'uppercase'
+                capitalization: 'uppercase',
             });
         }
         return joinCode;
@@ -46,7 +44,7 @@ class LobbyManager {
         let player = new Player(this, socket);
         this.tokens.set(player.token, player);
 
-        return player
+        return player;
     }
 
     playerFromToken(token) {
@@ -77,7 +75,7 @@ class LobbyManager {
                 player.timeout = undefined;
             }
         });
-        
+
         player.on('createRoom', (roomName, callback) => {
             if (player.inRoom) {
                 callback(player.roomResponse('Leave the current room to create a new one.'));
@@ -90,9 +88,9 @@ class LobbyManager {
             }
 
             this.newRoom(player, roomName.trim());
-            callback(player.roomResponse())
+            callback(player.roomResponse());
         });
-        
+
         player.on('joinRoom', (code, callback) => {
             if (player.inRoom) {
                 callback(player.roomResponse('Leave the current room to join a new one.'));
@@ -190,7 +188,7 @@ class LobbyManager {
 }
 
 class Room {
-    constructor(manager, hostPlayer, name='New Room') {
+    constructor(manager, hostPlayer, name = 'New Room') {
         this.players = [];
         this.manager = manager;
         this.joinCode = manager.generateJoinCode();
@@ -198,7 +196,7 @@ class Room {
         this.id = uuid();
         this.name = name;
         this.scores = new Map();
-        
+
         hostPlayer.joinRoom(this);
         this.setHost(hostPlayer);
     }
@@ -248,7 +246,7 @@ class Room {
         this.players = this.players.filter((item) => item !== player);
         this.scores.delete(player);
         this.size = this.players.length;
-        
+
         if (player.isHost && this.size > 0) {
             this.setHost(this.players[0]);
         }
@@ -256,7 +254,7 @@ class Room {
         if (this.lastWinner == player) {
             this.lastWinner = undefined;
         }
-        
+
         if (this.isEmpty()) {
             this.manager.closeRoom(this);
         } else {
@@ -292,7 +290,7 @@ class Room {
             self: {
                 playerNumber: player.playerNumber,
                 name: player.name,
-                score: this.scores.get(player)
+                score: this.scores.get(player),
             },
             joinCode: this.joinCode,
             roomName: this.name,
@@ -300,21 +298,21 @@ class Room {
             full: this.size >= 3,
             host: {
                 playerNumber: this.host.playerNumber,
-                name: this.host.name
+                name: this.host.name,
             },
-            players: []
+            players: [],
         };
         for (let p of this.players) {
             info.players.push({
                 name: p.name,
                 playerNumber: p.playerNumber,
-                score: this.scores.get(p)
+                score: this.scores.get(p),
             });
         }
         if (this.lastWinner) {
             info['lastWinner'] = {
                 playerNumber: this.lastWinner.playerNumber,
-                name: this.lastWinner.name
+                name: this.lastWinner.name,
             };
         }
         return info;
@@ -329,7 +327,7 @@ class Room {
                     roomState: {
                         inRoom: p.inRoom,
                         playerName: p.name,
-                    }
+                    },
                 };
                 res.roomState['roomInfo'] = this.getInfo(p);
                 p.emit('roomStateUpdate', res);
@@ -352,16 +350,14 @@ class Room {
     scoreGame(winner, finalCombo, lastPlayer, previousCombo) {
         this.lastWinner = winner;
         let scores = this.scores;
-        
+
         let winnerIndex = winner.playerNumber;
         let lastPlayerThrew = false;
         finalCombo.value -= 1;
-        if (finalCombo.name == 'Single' && 
-            previousCombo.name == 'Single' &&
-            lastPlayer.hand.canPlayOn(finalCombo)) {
-                lastPlayerThrew = true;
-            }
-        
+        if (finalCombo.name == 'Single' && previousCombo.name == 'Single' && lastPlayer.hand.canPlayOn(finalCombo)) {
+            lastPlayerThrew = true;
+        }
+
         let total = 0;
         for (let p of this.players) {
             if (p != winner) {
@@ -389,10 +385,80 @@ class Room {
     }
 }
 
-const animals = ["alligator","anteater","armadillo","axolotl","badger","bat","beaver","buffalo","camel","capybara","chameleon","cheetah","chinchilla","chipmunk","chupacabra","coyote","crow","dingo","dinosaur","dog","dolphin","dragon","duck","elephant","ferret","fox","frog","giraffe","gopher","grizzly","hedgehog","hippo","hyena","jackal","ibex","ifrit","iguana","koala","kraken","lemur","leopard","liger","lion","llama","manatee","mink","monkey","narwhal","nyan cat","octopus","orangutan","otter","panda","penguin","platypus","python","rabbit","raccoon","rhino","sheep","shrew","skunk","squirrel","tiger","turtle","unicorn","walrus","wolf","wombat"]
+const animals = [
+    'alligator',
+    'anteater',
+    'armadillo',
+    'axolotl',
+    'badger',
+    'bat',
+    'beaver',
+    'buffalo',
+    'camel',
+    'capybara',
+    'chameleon',
+    'cheetah',
+    'chinchilla',
+    'chipmunk',
+    'chupacabra',
+    'coyote',
+    'crow',
+    'dingo',
+    'dinosaur',
+    'dog',
+    'dolphin',
+    'dragon',
+    'duck',
+    'elephant',
+    'ferret',
+    'fox',
+    'frog',
+    'giraffe',
+    'gopher',
+    'grizzly',
+    'hedgehog',
+    'hippo',
+    'hyena',
+    'jackal',
+    'ibex',
+    'ifrit',
+    'iguana',
+    'koala',
+    'kraken',
+    'lemur',
+    'leopard',
+    'liger',
+    'lion',
+    'llama',
+    'manatee',
+    'mink',
+    'monkey',
+    'narwhal',
+    'nyan cat',
+    'octopus',
+    'orangutan',
+    'otter',
+    'panda',
+    'penguin',
+    'platypus',
+    'python',
+    'rabbit',
+    'raccoon',
+    'rhino',
+    'sheep',
+    'shrew',
+    'skunk',
+    'squirrel',
+    'tiger',
+    'turtle',
+    'unicorn',
+    'walrus',
+    'wolf',
+    'wombat',
+];
 
 class Player {
-    constructor(manager, socket, name){
+    constructor(manager, socket, name) {
         this.manager = manager;
         this.socket = socket;
         this.id = uuid();
@@ -406,12 +472,24 @@ class Player {
         }
     }
 
-    on(...args) { return this.socket.on(...args); }
-    off(...args) { return this.socket.off(...args); }
-    emit(...args) { return this.socket.emit(...args); }
-    join(...args) { return this.socket.join(...args); }
-    leave(...args) { return this.socket.leave(...args); }
-    removeAllListeners(...args) { return this.socket.removeAllListeners(...args); }
+    on(...args) {
+        return this.socket.on(...args);
+    }
+    off(...args) {
+        return this.socket.off(...args);
+    }
+    emit(...args) {
+        return this.socket.emit(...args);
+    }
+    join(...args) {
+        return this.socket.join(...args);
+    }
+    leave(...args) {
+        return this.socket.leave(...args);
+    }
+    removeAllListeners(...args) {
+        return this.socket.removeAllListeners(...args);
+    }
 
     changeSocket(socket) {
         this.socket.removeAllListeners();
@@ -472,13 +550,13 @@ class Player {
             errorMsg: errorMsg,
             roomState: {
                 playerName: this.name,
-                inRoom: this.inRoom
-            }
+                inRoom: this.inRoom,
+            },
         };
         if (this.inRoom) {
             res.roomState['roomInfo'] = this.room.getInfo(this);
         }
-        
+
         return res;
     }
 }

@@ -1,100 +1,109 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8" />
+        <title>Card Game</title>
+        <meta name="author" content="Michael Huang" />
 
-<head>
-    <meta charset="utf-8">
-    <title>Card Game</title>
-    <meta name="author" content="Michael Huang">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
-    <link rel="stylesheet" href="css/cards.css">
-    <link rel="stylesheet" href="css/styles.css">
-</head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+        <link rel="stylesheet" href="css/cards.css" />
+        <link rel="stylesheet" href="css/styles.css" />
+    </head>
 
-<body>
-    <div id="header">
-        <div id="titleText">
-            <h3>Card Game</h3>
-        </div>
-        <div id="playerName">
-            <div>
-                <span contenteditable autocapitalize="false" 
-                    autocorrect="false" autocomplete="off" ></span>
+    <body>
+        <div id="header">
+            <div id="titleText">
+                <h3>Card Game</h3>
             </div>
-        </div>
-        <div id="joinCode">
-            <div>
-                <span class="tooltip">click to copy</span>
-                <span class="joinCode"></span>
-            </div>
-        </div>
-    </div>
-    <div id="app" class="preGame">
-        <div id="lobby">
-            <div id="lobbyList" class="hidden">
-                <div id="player-0" playerNumber="0" class="player hidden">
-                    <span class="name"></span>
-                    <span class="score"></span>
-                </div>
-                <div id="player-1" playerNumber="1" class="player hidden">
-                    <span class="name"></span>
-                    <span class="score"></span>
-                </div>
-                <div id="player-2" playerNumber="2" class="player hidden">
-                    <span class="name"></span>
-                    <span class="score"></span>
+            <div id="playerName">
+                <div>
+                    <span contenteditable autocapitalize="false" autocorrect="false" autocomplete="off"></span>
                 </div>
             </div>
-            <div id="lobbyFunctions">
-                <div id="createRoom" event="createRoom" class="lobbyFunction hidden">
-                    <input type="button" class="button inputGroup" value="Create Room">
-                    <input type="text" class="textField inputGroup" placeholder="Room Name"
-                        autocomplete="off" autocorrect="off">
-                </div>
-                <div id="joinRoom" event="joinRoom" class="lobbyFunction hidden">
-                    <input type="button" class="button inputGroup" value="Join Room">
-                    <input type="text" class="textField inputGroup" placeholder="Code"
-                        autocomplete="off" autocorrect="off">
-                </div>
-                <div id="leaveRoom" event="leaveRoom" class="lobbyFunction hidden">
-                    <input type="button" class="button" value="Leave Room">
-                </div>
-                <div id="startGame" event="startGame" class="lobbyFunction hidden">
-                    <input type="button" class="button" value="Start Game">
+            <div id="joinCode">
+                <div>
+                    <span class="tooltip">click to copy</span>
+                    <span class="joinCode"></span>
                 </div>
             </div>
         </div>
-        <div id="game">
-            <div id="otherCards">
-                <div id="opponentCards">
-                    <div id="opponent-0" number="0" class="opponent">
-                        <span class="opponentName"></span>
-                        <span class="cardCount"></span>
-                        <ul class="deck"></ul>
+        <div id="app" class="preGame">
+            <div id="lobby">
+                <div id="lobbyList" class="hidden">
+                    <div id="player-0" playerNumber="0" class="player hidden">
+                        <span class="name"></span>
+                        <span class="score"></span>
                     </div>
-                    <div id="opponent-1" number="1" class="opponent">
-                        <span class="opponentName"></span>
-                        <span class="cardCount"></span>
-                        <ul class="deck"></ul>
+                    <div id="player-1" playerNumber="1" class="player hidden">
+                        <span class="name"></span>
+                        <span class="score"></span>
+                    </div>
+                    <div id="player-2" playerNumber="2" class="player hidden">
+                        <span class="name"></span>
+                        <span class="score"></span>
+                    </div>
+                </div>
+                <div id="lobbyFunctions">
+                    <div id="createRoom" event="createRoom" class="lobbyFunction hidden">
+                        <input type="button" class="button inputGroup" value="Create Room" />
+                        <input
+                            type="text"
+                            class="textField inputGroup"
+                            placeholder="Room Name"
+                            autocomplete="off"
+                            autocorrect="off"
+                        />
+                    </div>
+                    <div id="joinRoom" event="joinRoom" class="lobbyFunction hidden">
+                        <input type="button" class="button inputGroup" value="Join Room" />
+                        <input
+                            type="text"
+                            class="textField inputGroup"
+                            placeholder="Code"
+                            autocomplete="off"
+                            autocorrect="off"
+                        />
+                    </div>
+                    <div id="leaveRoom" event="leaveRoom" class="lobbyFunction hidden">
+                        <input type="button" class="button" value="Leave Room" />
+                    </div>
+                    <div id="startGame" event="startGame" class="lobbyFunction hidden">
+                        <input type="button" class="button" value="Start Game" />
                     </div>
                 </div>
             </div>
-            <div id="lastCombo">
-                <ul class="hand"></ul>
-            </div>
-            <div id="myCards">
-                <ul class="hand"></ul>
-                <input id="playCards" type="button" class="button clear" value="Play Cards">
+            <div id="game">
+                <div id="otherCards">
+                    <div id="opponentCards">
+                        <div id="opponent-0" number="0" class="opponent">
+                            <span class="opponentName"></span>
+                            <span class="cardCount"></span>
+                            <ul class="deck"></ul>
+                        </div>
+                        <div id="opponent-1" number="1" class="opponent">
+                            <span class="opponentName"></span>
+                            <span class="cardCount"></span>
+                            <ul class="deck"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="lastCombo">
+                    <ul class="hand"></ul>
+                </div>
+                <div id="myCards">
+                    <ul class="hand"></ul>
+                    <input id="playCards" type="button" class="button clear" value="Play Cards" />
+                </div>
             </div>
         </div>
-    </div>
-    <div id="errorModal" class="modal">
-        <p id="errorMsg"></p>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/cards.js"></script>
-    <script src="js/main.js"></script>
-</body>
+        <div id="errorModal" class="modal">
+            <p id="errorMsg"></p>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/cards.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

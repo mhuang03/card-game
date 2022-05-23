@@ -11,8 +11,6 @@ const { LobbyManager } = require('./lobby.js');
 const publicPath = path.join(__dirname, '/../public');
 const port = process.env.PORT || 3000;
 
-
-
 /* Setup Server */
 let app = express();
 let server = http.createServer(app);
@@ -29,7 +27,7 @@ app.get('/:joinCode', (req, res) => {
         let room = lobby.roomFromCode(joinCode);
         if (!room.full && room.size < 3) {
             return res.sendFile('index.html', {
-                root: publicPath
+                root: publicPath,
             });
         }
     }
@@ -42,8 +40,6 @@ server.listen(port, () => {
 
 let lobby = new LobbyManager();
 
-
-
 /* Setup Connection */
 io.use((socket, next) => {
     // attempt to retrieve session from a token
@@ -52,7 +48,7 @@ io.use((socket, next) => {
     if (sessionToken) {
         player = lobby.playerFromToken(sessionToken);
     }
-    
+
     if (player) {
         player.changeSocket(socket);
         socket.player = player;
@@ -68,7 +64,7 @@ io.use((socket, next) => {
     let url = new URL(socket.request.headers.referer);
     let path = url.pathname;
     let matches = path.match(/^\/([A-Z0-9]{5})$/);
-    
+
     if (matches) {
         let joinCode = matches[1];
         if (lobby.roomCodes.has(joinCode)) {
@@ -92,7 +88,7 @@ io.on('connection', (socket) => {
             player.emit('gameStateUpdate', player.room.game.gameResponse());
         }
     }
-    
+
     lobby.setupListeners(player);
     if (player.inRoom) {
         if (player.room.inGame) {

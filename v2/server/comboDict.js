@@ -1,254 +1,254 @@
 const comboDict = {
     2: {
-        'ZZ': {
+        ZZ: {
             name: 'Pair',
             base: 2,
             length: 1,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     3: {
-        'ZZZ': {
+        ZZZ: {
             name: 'Triple',
             base: 3,
             length: 1,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     4: {
-        'ZZZZ': {
+        ZZZZ: {
             name: 'Bomb',
             base: 4,
             length: 1,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AAZZ': {
+        AAZZ: {
             name: 'Consecutive Pairs',
             base: 2,
             length: 2,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     5: {
-        'ABCDZ': {
+        ABCDZ: {
             name: 'Consecutive Singles',
             base: 1,
             length: 5,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     6: {
-        'ABCDEZ': {
+        ABCDEZ: {
             name: 'Consecutive Singles',
             base: 1,
             length: 6,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AABBZZ': {
+        AABBZZ: {
             name: 'Consecutive Pairs',
             base: 2,
             length: 3,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AAAZZZ': {
+        AAAZZZ: {
             name: 'Consecutive Triples',
             base: 3,
             length: 2,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     7: {
-        'ABCDEFZ': {
+        ABCDEFZ: {
             name: 'Consecutive Singles',
             base: 1,
             length: 7,
             kicker: 0,
-            complete: true
+            complete: true,
         },
     },
     8: {
-        'ABCDEFGZ': {
+        ABCDEFGZ: {
             name: 'Consecutive Singles',
             base: 1,
             length: 8,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AABBCCZZ': {
+        AABBCCZZ: {
             name: 'Consecutive Pairs',
             base: 2,
             length: 4,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AAAAZZZZ': {
+        AAAAZZZZ: {
             name: 'Consecutive Quadruples',
             base: 4,
             length: 2,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     9: {
-        'ABCDEFGHZ': {
+        ABCDEFGHZ: {
             name: 'Consecutive Singles',
             base: 1,
             length: 9,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AAABBBZZZ': {
+        AAABBBZZZ: {
             name: 'Consecutive Triples',
             base: 3,
             length: 3,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     10: {
-        'ABCDEFGHIZ': {
+        ABCDEFGHIZ: {
             name: 'Consecutive Singles',
             base: 1,
             length: 10,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AABBCCDDZZ': {
+        AABBCCDDZZ: {
             name: 'Consecutive Pairs',
             base: 2,
             length: 5,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     11: {
-        'ABCDEFGHIJZ': {
+        ABCDEFGHIJZ: {
             name: 'Consecutive Singles',
             base: 1,
             length: 9,
             kicker: 0,
-            complete: true
+            complete: true,
         },
     },
     12: {
-        'ABCDEFGHIJKZ': {
+        ABCDEFGHIJKZ: {
             name: 'Consecutive Singles',
             base: 1,
             length: 12,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AABBCCDDEEZZ': {
+        AABBCCDDEEZZ: {
             name: 'Consecutive Pairs',
             base: 2,
             length: 5,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AAABBBCCCZZZ': {
+        AAABBBCCCZZZ: {
             name: 'Consecutive Triples',
             base: 3,
             length: 4,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AAAABBBBZZZZ': {
+        AAAABBBBZZZZ: {
             name: 'Consecutive Quadruples',
             base: 4,
             length: 3,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     13: {},
     14: {
-        'AABBCCDDEEFFZZ': {
+        AABBCCDDEEFFZZ: {
             name: 'Consecutive Pairs',
             base: 2,
             length: 7,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     15: {
-        'AAABBBCCCDDDZZZ': {
+        AAABBBCCCDDDZZZ: {
             name: 'Consecutive Triples',
             base: 3,
             length: 5,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
     16: {
-        'AABBCCDDEEFFGGZZ': {
+        AABBCCDDEEFFGGZZ: {
             name: 'Consecutive Pairs',
             base: 2,
             length: 8,
             kicker: 0,
-            complete: true
+            complete: true,
         },
-        'AAAABBBBCCCCZZZZ': {
+        AAAABBBBCCCCZZZZ: {
             name: 'Consecutive Quadruples',
             base: 4,
             length: 4,
             kicker: 0,
-            complete: true
-        }
+            complete: true,
+        },
     },
-}
+};
 
 const kickerCombos = {
-    'ZZZ': {
+    ZZZ: {
         name: 'Triple with Kicker',
         base: 3,
         length: 1,
-        range: [4, 5]
+        range: [4, 5],
     },
-    'AAAZZZ': {
+    AAAZZZ: {
         name: 'Consecutive Triples with Kicker',
         base: 3,
         length: 2,
-        range: [7, 10]
+        range: [7, 10],
     },
-    'AAABBBZZZ': {
+    AAABBBZZZ: {
         name: 'Consecutive Triples with Kicker',
         base: 3,
         length: 3,
-        range: [10, 15]
+        range: [10, 15],
     },
-    'AAABBBCCCZZZ': {
+    AAABBBCCCZZZ: {
         name: 'Consecutive Triples with Kicker',
         base: 3,
         length: 4,
-        range: [13, 16]
+        range: [13, 16],
     },
-    'ZZZZ': {
+    ZZZZ: {
         name: 'Quadruple with Kicker',
         base: 4,
         length: 1,
-        range: [5, 7]
+        range: [5, 7],
     },
-    'AAAAZZZZ': {
+    AAAAZZZZ: {
         name: 'Consecutive Quadruples with Kicker',
         base: 4,
         length: 2,
-        range: [9, 14]
+        range: [9, 14],
     },
-    'AAAABBBBZZZZ': {
+    AAAABBBBZZZZ: {
         name: 'Consecutive Quadruples with Kicker',
         base: 4,
         length: 3,
-        range: [13, 16]
-    }
-}
+        range: [13, 16],
+    },
+};
 
 for (let exp of Object.keys(kickerCombos)) {
     let info = kickerCombos[exp];
@@ -258,14 +258,14 @@ for (let exp of Object.keys(kickerCombos)) {
         let kicker = i - (min - 1);
         let complete = i == max;
         for (let left = 0; left <= kicker; left++) {
-            let newExp = '#'.repeat(left) + exp + '#'.repeat(kicker-left);
+            let newExp = '#'.repeat(left) + exp + '#'.repeat(kicker - left);
             comboDict[i][newExp] = {
                 name: info.name,
                 base: info.base,
                 length: info.length,
                 kicker: kicker,
-                complete: complete
-            }
+                complete: complete,
+            };
         }
     }
 }

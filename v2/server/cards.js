@@ -8,43 +8,43 @@ class Card {
 }
 
 const valueMap = {
-    '3': 0,
-    '4': 1,
-    '5': 2,
-    '6': 3,
-    '7': 4,
-    '8': 5,
-    '9': 6,
-    '10': 7,
-    'J': 8,
-    'Q': 9,
-    'K': 10,
-    'A': 11,
-    '2': 12
+    3: 0,
+    4: 1,
+    5: 2,
+    6: 3,
+    7: 4,
+    8: 5,
+    9: 6,
+    10: 7,
+    J: 8,
+    Q: 9,
+    K: 10,
+    A: 11,
+    2: 12,
 };
 
-const rankMap = Object.fromEntries(Object.entries(valueMap).map(a => a.reverse()));
+const rankMap = Object.fromEntries(Object.entries(valueMap).map((a) => a.reverse()));
 
 function compare(card1, card2) {
-        if (card1.rank == card2.rank) {
-            if (card1.suit < card2.suit) {
-                return -1;
-            } else if (card1.suit > card2.suit) {
-                return 1;
-            } else {
-                return 0;
-            }
+    if (card1.rank == card2.rank) {
+        if (card1.suit < card2.suit) {
+            return -1;
+        } else if (card1.suit > card2.suit) {
+            return 1;
+        } else {
+            return 0;
         }
-    
-        return valueMap[card1.rank] - valueMap[card2.rank];
     }
+
+    return valueMap[card1.rank] - valueMap[card2.rank];
+}
 
 class Deck {
     constructor() {
-        let ranks = ['3','4','5','6','7','8','9','10','J','Q','K'];
+        let ranks = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         let suits = ['Hearts', 'Spades', 'Diamonds', 'Clubs'];
         this.cards = [];
-        
+
         for (let s of suits) {
             for (let r of ranks) {
                 this.cards.push(new Card(r, s));
@@ -89,14 +89,14 @@ class Hand {
     toObjArr() {
         let arr = [];
         for (let c of this.cards) {
-            arr.push({rank: c.rank, suit: c.suit});
+            arr.push({ rank: c.rank, suit: c.suit });
         }
         return arr;
     }
 
     contains(combo) {
         for (let c of combo.cards) {
-            if (!this.cards.some(card => card.rank == c.rank && card.suit == c.suit)) {
+            if (!this.cards.some((card) => card.rank == c.rank && card.suit == c.suit)) {
                 return false;
             }
         }
@@ -105,7 +105,7 @@ class Hand {
 
     play(combo) {
         this.cards = this.cards.filter((c) => {
-            return !combo.cards.some(card => card.rank == c.rank && card.suit == c.suit)
+            return !combo.cards.some((card) => card.rank == c.rank && card.suit == c.suit);
         });
         this.size = this.cards.length;
     }
@@ -134,7 +134,7 @@ class Hand {
             if (rankCount >= combo.base) {
                 currentLength += 1;
                 if (currentLength >= combo.length) {
-                    highestValue = i
+                    highestValue = i;
                     if (lowestValue == 0) {
                         lowestValue = i;
                     }
@@ -192,7 +192,7 @@ class Combo {
     toObjArr() {
         let arr = [];
         for (let c of this.cards) {
-            arr.push({rank: c.rank, suit: c.suit});
+            arr.push({ rank: c.rank, suit: c.suit });
         }
         return arr;
     }
@@ -201,16 +201,18 @@ class Combo {
         if (this.name == 'Bomb' && other.name != 'Bomb') {
             return true;
         }
-        return this.name == other.name &&
+        return (
+            this.name == other.name &&
             this.base == other.base &&
             this.length == other.length &&
             this.kicker == other.kicker &&
-            this.value > other.value;
+            this.value > other.value
+        );
     }
 
     parse() {
         this.sort();
-        
+
         if (this.size == 0) {
             this.name = 'Invalid';
             return;
@@ -223,7 +225,7 @@ class Combo {
             this.value = valueMap[this.rank];
             return;
         }
-        
+
         let dict = comboDict[this.size];
         let matches = [];
         for (let exp of Object.keys(dict)) {
@@ -233,11 +235,11 @@ class Combo {
                 matches.push({
                     rank: match.rank,
                     value: valueMap[match.rank],
-                    info: info
+                    info: info,
                 });
             }
         }
-        
+
         if (matches.length == 0) {
             this.name = 'Invalid';
             return;
@@ -297,7 +299,7 @@ class Combo {
                     returnCard = cards[i];
                 }
             }
-            
+
             if (chars[i] == currentChar) {
                 if (currentCard.rank != cards[i].rank) {
                     return false;

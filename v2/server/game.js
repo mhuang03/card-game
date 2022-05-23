@@ -9,7 +9,7 @@ class CardGame {
             p.setHand(new Hand());
             p.setNumber(room.players.indexOf(p));
             for (let i = 0; i < 16; i++) {
-                let card = deck.pop()
+                let card = deck.pop();
                 p.hand.push(card);
 
                 if (!lastWinner && card.rank == '3' && card.suit == 'Hearts') {
@@ -18,7 +18,7 @@ class CardGame {
                 }
             }
             p.hand.sort();
-            
+
             this.setupListeners(p);
         }
         if (lastWinner) {
@@ -48,7 +48,7 @@ class CardGame {
                 return;
             }
 
-            let stringArr = cards.map(card => card.rank + ' of ' + card.suit);
+            let stringArr = cards.map((card) => card.rank + ' of ' + card.suit);
             if (stringArr.some((val, ind) => stringArr.indexOf(val) != ind)) {
                 callback(this.gameResponse(player, 'Duplicate cards were submitted.'));
                 return;
@@ -74,13 +74,13 @@ class CardGame {
                 callback(this.gameResponse(player, 'Cannot play that combo.'));
                 return;
             }
-            
+
             this.newTrick = false;
             this.secondToLastCombo = this.previousCombo;
-            this.secondToLastPlayer = this.previousPlayer
+            this.secondToLastPlayer = this.previousPlayer;
             this.previousCombo = combo;
             this.previousPlayer = player;
-            
+
             player.hand.play(combo);
 
             if (combo.name == 'Bomb') {
@@ -90,14 +90,14 @@ class CardGame {
             if (player.hand.size == 0) {
                 this.winner = {
                     name: player.name,
-                    playerNumber: player.playerNumber
-                }
+                    playerNumber: player.playerNumber,
+                };
                 room.scoreGame(player, combo, this.secondToLastPlayer, this.secondToLastCombo);
                 room.endGame();
             } else {
                 this.advanceTurn();
             }
-            
+
             callback(this.gameResponse(player));
             this.emitGameStateUpdate();
         });
@@ -111,8 +111,7 @@ class CardGame {
         this.turn += 1;
         this.turn %= 3;
         this.currentPlayer = this.room.players[this.turn];
-        while (!this.currentPlayer.hand.canPlayOn(this.previousCombo)
-              && this.currentPlayer != this.previousPlayer) {
+        while (!this.currentPlayer.hand.canPlayOn(this.previousCombo) && this.currentPlayer != this.previousPlayer) {
             this.turn += 1;
             this.turn %= 3;
             this.currentPlayer = this.room.players[this.turn];
@@ -132,23 +131,23 @@ class CardGame {
         }
     }
 
-    gameResponse(player, errorMsg='') {
+    gameResponse(player, errorMsg = '') {
         let res = {
             success: errorMsg == '',
             errorMsg: errorMsg,
             gameState: {
                 self: {
                     playerNumber: player.playerNumber,
-                    name: player.name
+                    name: player.name,
                 },
                 winner: this.winner,
                 newTrick: this.newTrick,
                 currentPlayer: {
                     playerNumber: this.turn,
-                    name: this.currentPlayer.name
+                    name: this.currentPlayer.name,
                 },
-                players: []
-            }
+                players: [],
+            },
         };
 
         if (this.previousCombo) {
@@ -159,7 +158,7 @@ class CardGame {
             let playerInfo = {
                 name: p.name,
                 length: p.hand.size,
-                cardsVisible: p == player
+                cardsVisible: p == player,
             };
             if (this.winner) {
                 playerInfo.cardsVisible = true;
@@ -169,7 +168,7 @@ class CardGame {
             }
             res.gameState.players.push(playerInfo);
         }
-        
+
         return res;
     }
 }

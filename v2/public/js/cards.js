@@ -1,7 +1,7 @@
 (function (window) {
     let App = window.App || {};
     let $ = window.jQuery;
-    
+
     function Card(card) {
         this.rank = card.rank;
         this.suit = card.suit;
@@ -12,23 +12,23 @@
             Clubs: 'clubs',
             Diamonds: 'diams',
             Hearts: 'hearts',
-            Spades: 'spades'
-        }
+            Spades: 'spades',
+        };
 
         unicodeMap = {
             Clubs: '&#9827;',
             Diamonds: '&#9830;',
             Hearts: '&#9829;',
-            Spades: '&#9824;'
-        }
+            Spades: '&#9824;',
+        };
 
         let $li = $('<li></li>');
-        
+
         let $label = $('<label></label>', {
             for: `c-${rank}-${suit}`,
             class: `card rank-${rank.toLowerCase()} ${suitMap[suit]}`,
             rank: rank,
-            suit: suit
+            suit: suit,
         });
 
         let $info = $('<div></div>', {
@@ -37,11 +37,11 @@
 
         let $rank = $('<span></span>', {
             class: 'rank',
-            text: rank
+            text: rank,
         });
 
         let $suit = $('<span></span>', {
-            class: 'suit'
+            class: 'suit',
         }).html(unicodeMap[suit]);
 
         let $checkbox = $('<input></input>', {
@@ -49,7 +49,7 @@
             name: `c-${rank}-${suit}`,
             id: `c-${rank}-${suit}`,
             value: 'select',
-            class: 'hidden'
+            class: 'hidden',
         });
 
         $info.append($rank);
@@ -70,22 +70,22 @@
             Clubs: 'clubs',
             Diamonds: 'diams',
             Hearts: 'hearts',
-            Spades: 'spades'
-        }
+            Spades: 'spades',
+        };
 
         unicodeMap = {
             Clubs: '&#9827;',
             Diamonds: '&#9830;',
             Hearts: '&#9829;',
-            Spades: '&#9824;'
-        }
+            Spades: '&#9824;',
+        };
 
         let $li = $('<li></li>');
-        
+
         let $div = $('<div></div>', {
             class: `card rank-${rank.toLowerCase()} ${suitMap[suit]}`,
             rank: rank,
-            suit: suit
+            suit: suit,
         });
 
         let $info = $('<div></div>', {
@@ -94,11 +94,11 @@
 
         let $rank = $('<span></span>', {
             class: 'rank',
-            text: rank
+            text: rank,
         });
 
         let $suit = $('<span></span>', {
-            class: 'suit'
+            class: 'suit',
         }).html(unicodeMap[suit]);
 
         $info.append($rank);
@@ -110,9 +110,9 @@
 
     function DisplayCardBack() {
         let $li = $('<li></li>');
-        
+
         let $div = $('<div></div>', {
-            class: `card back`
+            class: `card back`,
         });
         $li.append($div);
         this.$li = $li;
