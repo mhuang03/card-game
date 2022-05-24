@@ -1,0 +1,5 @@
+:root {
+    --px: min(calc(100vw / 1200), calc(100vh / 650));
+    --rem: calc(16 * var(--px));
+    --cem: calc(1.4*var(--rem));
+}

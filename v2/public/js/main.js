@@ -147,14 +147,14 @@
     // join code copy to clipboard
     $('#joinCode').click(() => {
         let code = $('#joinCode > div > span.joinCode').text();
-        navigator.clipboard.writeText(code);
+        navigator.clipboard.writeText('https://cards.makeme.party/' + code);
     });
 
     /*******************/
     /*    Rendering    */
     /*******************/
     const renderRoom = (roomState, errorMsg) => {
-        console.log(roomState);
+        //console.log(roomState);
         $('#playerName > div > span').text(roomState.playerName);
         if (roomState.inRoom) {
             let roomInfo = roomState.roomInfo;
@@ -239,7 +239,7 @@
         }
     };
     const renderGame = (gameState, errorMsg) => {
-        console.log(gameState);
+        //console.log(gameState);
         $('#app').removeClass('preGame');
 
         let self = gameState.self.playerNumber;
@@ -345,6 +345,8 @@
                 $li.appendTo($newCombo);
             }
             $('#lastCombo > ul').replaceWith($newCombo);
+        } else {
+            $('#lastCombo > ul').empty();
         }
 
         if (gameState.newTrick) {
@@ -371,7 +373,7 @@
 
     // log all events
     socket.onAny((event, ...args) => {
-        console.log(event, ...args);
+        //console.log(event, ...args);
     });
 
     let Game = {

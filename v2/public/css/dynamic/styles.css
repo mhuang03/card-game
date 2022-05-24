@@ -2,14 +2,24 @@
 
 html,
 body {
-    height: 100%;
     font-family: 'Lato', sans-serif;
+    font-size: calc(1.4*var(--rem));
+    background-color: #00506b;
     cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    /* touch-action: none; */
 }
 
 #content {
+    width: calc(1200*var(--px) - 2*calc(1.5*var(--px)));
+    height: calc(650*var(--px) - 2*calc(1.5*var(--px)));
+    margin: auto;
     display: flex;
     flex-direction: column;
+    border: calc(1.5*var(--px)) solid black;
 }
 
 .hidden {
@@ -29,7 +39,7 @@ body {
 }
 
 .infoText {
-    margin: 1.67em 0;
+    margin: calc(1.67*var(--rem)) 0;
     display: flex;
     justify-content: space-between;
 }
@@ -48,21 +58,26 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1.5px solid black;
-    text-shadow: 1px 1px black;
-    border-radius: 5px;
-    padding: 3px;
-    margin-bottom: 10px;
+    border: calc(1.5*var(--px)) solid black;
+    text-shadow: calc(1*var(--px)) calc(1*var(--px)) black;
+    border-radius: calc(5*var(--px));
+    padding: calc(3*var(--px));
+    margin-bottom: calc(10*var(--px));
     color: white;
     background-color: #7e4708;
+    width: calc(91*var(--px));
 }
 
 .player span.name {
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: bold;
     width: 100%;
-    overflow-x: hidden;
+    overflow: hidden;
     text-align: center;
+}
+
+.player span.score {
+    font-size: 0.8em;
 }
 
 .player span.score:before {
@@ -91,18 +106,18 @@ body {
     flex-direction: column;
     align-items: center;
     color: white;
-    margin-top: 20px;
+    margin-top: calc(20*var(--px));
 }
 .opponent span.opponentName {
     font-weight: bold;
     word-break: break-word;
     word-wrap: break-word;
-    text-shadow: 1px 1px black;
+    text-shadow: calc(1*var(--px)) calc(1*var(--px)) black;
 }
 .opponent span.cardCount {
-    font-size: 12px;
-    margin-bottom: 5px;
-    text-shadow: 1px 1px black;
+    font-size: 0.75em;
+    margin-bottom: calc(5*var(--px));
+    text-shadow: calc(1*var(--px)) calc(1*var(--px)) black;
 }
 .opponent span.cardCount:after {
     content: ' Cards';
@@ -125,12 +140,12 @@ body {
 }
 
 #lobby {
-    width: 10%;
+    width: calc(100*var(--px));
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-right: 1.5px solid black;
-    padding: 10px;
+    border-right: calc(1.5*var(--px)) solid black;
+    padding: calc(10*var(--px));
     background-color: #4c3422;
     background-color: #00000070;
 }
@@ -147,7 +162,7 @@ body {
 #lobbyFunctions {
     align-items: center;
     justify-content: flex-end;
-    margin-bottom: 10px;
+    margin-bottom: calc(10*var(--px));
 }
 
 #lobbyFunctions input {
@@ -159,12 +174,13 @@ body {
 .lobbyFunction {
     display: flex;
     flex-direction: column;
-    border-radius: 10px;
+    border: calc(1.5*var(--px));
+    border-radius: calc(10*var(--px));
     width: 100%;
-    margin-top: 10px;
-    -moz-box-shadow: 0.2em 0.2em 0.5em #3339;
-    -webkit-box-shadow: 0.2em 0.2em 0.5em #3339;
-    box-shadow: 0.2em 0.2em 0.5em #3339;
+    margin-top: calc(10*var(--px));
+    -moz-box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
+    -webkit-box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
+    box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
 }
 
 #opponentCards {
@@ -187,6 +203,7 @@ body {
 }
 
 #app {
+    flex: 1;
     background-color: #96642c;
     background-image: url('background.svg');
     background-size: 150%;
@@ -219,8 +236,8 @@ body {
 
 #playCards {
     width: min-content;
-    margin-bottom: 20px;
-    margin-top: 10px;
+    margin-bottom: calc(20*var(--px));
+    margin-top: calc(10*var(--px));
 }
 
 #header {
@@ -229,32 +246,32 @@ body {
     justify-content: space-between;
     background-color: #009fd2;
     color: white;
-    padding: 5px;
-    text-shadow: 1px 1px black;
+    padding: calc(5*var(--px));
+    text-shadow: calc(1*var(--px)) calc(1*var(--px)) black;
 }
 
 #titleText {
     flex: 1;
-    padding: 5px;
+    padding: calc(5*var(--px));
 }
 
 #titleText h3 {
     float: left;
     margin: auto;
     margin-left: 0;
-    font-size: 20px;
+    font-size: 1.25em;
 }
 
 #joinCode {
     flex: 1;
-    padding: 5px;
+    padding: calc(5*var(--px));
 }
 
 #joinCode div {
     float: right;
     cursor: pointer;
     margin: auto;
-    font-size: 20px;
+    font-size: 1.25em;
 }
 
 #joinCode div .joinCode {
@@ -262,34 +279,34 @@ body {
 }
 
 #playerName {
-    padding: 5px;
-    border: 2px solid transparent;
-    border-radius: 5px;
+    padding: calc(5*var(--px));
+    border: calc(2*var(--px)) solid transparent;
+    border-radius: calc(5*var(--px));
     cursor: pointer;
 }
 
 #playerName span {
-    margin: auto;
+    vertical-align: middle;
 }
 
 #playerName span[contenteditable] {
-    outline: 0px solid transparent;
+    outline: 0 solid transparent;
 }
 
 #playerName:hover,
 #playerName:active,
 #playerName:focus {
-    border: 2px dashed white;
+    border: calc(2*var(--px)) dashed white;
 }
 
 .tooltip {
-    font-size: 16px;
+    font-size: calc(1*var(--rem));
     visibility: hidden;
     display: none;
     background-color: #4a4a4a;
     color: white;
-    border-radius: 5px;
-    padding: 2px 6px;
+    border-radius: calc(5*var(--px));
+    padding: calc(2*var(--px)) calc(6*var(--px));
 }
 
 .tooltip:after {
@@ -304,6 +321,7 @@ body {
 #app.preGame #lobby {
     width: 100%;
     background-color: transparent;
+    border-right: 0 solid transparent;
 }
 
 #app.preGame #game {
@@ -316,45 +334,53 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: flex-end;
-    border: 0px;
+    border: 0;
 }
 
 #app.preGame #lobby #lobbyFunctions .lobbyFunction {
     flex-direction: row;
-    margin: 0px 20px;
+    margin: 0 calc(20*var(--px));
     width: calc(100*var(--px));
+}
+
+#app.preGame #lobby #lobbyList .player {
+    width: unset;
 }
 
 .button {
     font-weight: bold;
     color: white;
-    padding: 0.5em 0.5em;
+    padding: calc(0.5*var(--rem)) calc(0.5*var(--rem));
     background: #009fd2;
-    border-radius: 10px;
-    border: 0px;
+    border-radius: calc(10*var(--px));
+    border: 0;
     transform-style: preserve-3d;
     transition: background 100ms cubic-bezier(0, 0, 0.58, 1);
-    text-shadow: 1px 1px black;
+    text-shadow: calc(1*var(--px)) calc(1*var(--px)) black;
 }
 .button:active {
     background: #007399;
 }
 .button.inputGroup {
-    border-radius: 10px 0 0 10px;
+    border-radius: calc(10*var(--px)) 0 0 calc(10*var(--px));
 }
 .textField.inputGroup {
-    border-radius: 0 10px 10px 0;
-    border: 0px;
-    padding: 0.5em;
+    border-radius: 0 calc(10*var(--px)) calc(10*var(--px)) 0;
+    border: 0;
+    padding: calc(0.5*var(--rem));
 }
 .textField.inputGroup:focus {
-    outline: 0px solid transparent;
+    outline: 0 solid transparent;
 }
 
 #playCards {
-    -moz-box-shadow: 0.2em 0.2em 0.5em #3339;
-    -webkit-box-shadow: 0.2em 0.2em 0.5em #3339;
-    box-shadow: 0.2em 0.2em 0.5em #3339;
+    -moz-box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
+    -webkit-box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
+    box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
+}
+
+#app #lobby.preRoom {
+    border-right: 0 solid transparent;
 }
 
 #app #lobby.preRoom #lobbyFunctions {
@@ -364,12 +390,35 @@ body {
 }
 
 #app #lobby.preRoom #lobbyFunctions .lobbyFunction {
-    width: 500px;
+    width: calc(500*var(--px));
 }
 #app #lobby.preRoom #lobbyFunctions .lobbyFunction .button.inputGroup {
-    width: 9.5em;
-    font-size: 20px;
+    width: calc(9.5*var(--rem));
+    font-size: 1.25em;
 }
 #app #lobby.preRoom #lobbyFunctions .lobbyFunction .textField.inputGroup {
-    font-size: 20px;
+    font-size: 1.25em;
+}
+
+.modal {
+    text-align: center;
+    max-width: calc(500*var(--px));
+    padding: calc(15*var(--px)) calc(30*var(--px));
+    -webkit-border-radius: calc(8*var(--px));
+    -moz-border-radius: calc(8*var(--px));
+    -o-border-radius: calc(8*var(--px));
+    -ms-border-radius: calc(8*var(--px));
+    border-radius: calc(8*var(--px));
+    -webkit-box-shadow: 0 0 calc(10*var(--px)) #000;
+    -moz-box-shadow: 0 0 calc(10*var(--px)) #000;
+    -o-box-shadow: 0 0 calc(10*var(--px)) #000;
+    -ms-box-shadow: 0 0 calc(10*var(--px)) #000;
+    box-shadow: 0 0 calc(10*var(--px)) #000;
+}
+
+.modal a.close-modal {
+    top: calc(-15*var(--px));
+    right: calc(-15*var(--px));
+    width: calc(30*var(--px));
+    height: calc(30*var(--px));
 }

@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Bayon&display=swap');
+
+.card {
+    display: inline-block;
+    width: calc(3.3*var(--cem));
+    height: calc(4.6*var(--cem));
+    border: calc(0.05*var(--cem)) solid #666;
+    border-radius: calc(0.3*var(--cem));
+    -moz-border-radius: calc(0.3*var(--cem));
+    -webkit-border-radius: calc(0.3*var(--cem));
+    -khtml-border-radius: calc(0.3*var(--cem));
+    padding: calc(0.25*var(--cem));
+    margin: 0;
+    text-align: center;
+    font-size: calc(1.4*var(--rem));
+    font-weight: normal;
+    font-family: Bayon, sans-serif;
+    position: relative;
+    background-color: #fff;
+    -moz-box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
+    -webkit-box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
+    box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3339;
+}
+
+ul.deck .card {
+    -moz-box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3333;
+    -webkit-box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3333;
+    box-shadow: calc(0.2*var(--cem)) calc(0.2*var(--cem)) calc(0.5*var(--cem)) #3333;
+}
+
+strong .card {
+    bottom: calc(1*var(--cem));
+}
+
+.card.back {
+    text-indent: calc(-4000*var(--px));
+    background-color: #ccc;
+    background-repeat: repeat;
+    background-image: url(data:image/gif;base64,R0lGODlhJAAkAJEAAOjFsezdztOKbL5QKCH5BAAAAAAALAAAAAAkACQAAAL/HC4RAqm/mmLHyHmAbczB11Ea8ombJKSgKo6Z17pXFznmS1JptiX0z3vVhpEKDoUIkoa0olGIUeZUk1RI6Yn2mh/FDAt6frOrRRTqXPpsVLYugzxaVy+YcBdnoWPZOT0E4eckQtZFZBjWoHixQFWl6Nhol6R2p1Okt5TGaEWZA6fjiMdhZgPHeWrTWGVq+jTZg1HYyAEWKLYzmyiGKoUimilz+YYryyTlg5RcDJSAbNx0Q7lMcbIGEyzTK8zVdfVaImzs/QV+prYqWWW2ObkoOApM/Em/rUlIm7fijs8a2EEKEaZ3AsMUgneEU6RcpJbZ27aGHkAO2Ors8xQH1IR0Bn5YnOtVAAA7);
+    background-position: text-indent: calc(2.5*var(--px)) 0, text-indent: calc(2.5*var(--px)) 0, 0 0, 0 0;
+    background-size: calc(5*var(--px)) calc(5*var(--px));
+    background-image: linear-gradient(135deg, #f74545 25%, transparent 25%),
+        linear-gradient(225deg, #f74545 25%, transparent 25%), linear-gradient(45deg, #f74545 25%, transparent 25%),
+        linear-gradient(315deg, #f74545 25%, #ffffff 25%);
+}
+
+.card.diams {
+    color: #f00 !important;
+}
+.card.hearts {
+    color: #f00 !important;
+}
+.card.spades {
+    color: #000 !important;
+}
+.card.clubs {
+    color: #000 !important;
+}
+
+.card .rank,
+.card .suit {
+    width: min-content;
+    line-height: calc(0.9*var(--cem));
+}
+
+.card div.info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 0;
+    margin-left: calc(0.3*var(--cem));
+    margin-bottom: calc(0.5*var(--cem));
+}
+
+.card:after {
+    position: absolute;
+    font-family: Arial, sans-serif;
+    font-size: calc(80*var(--px));
+    height: calc(60*var(--px));
+    display: flex;
+    align-items: center;
+    right: calc(1*var(--px));
+    bottom: calc(2*var(--px));
+}
+.card.diams:after {
+    content: '\2666';
+}
+.card.hearts:after {
+    content: '\2665';
+}
+.card.spades:after {
+    content: '\2660';
+}
+.card.clubs:after {
+    content: '\2663';
+}
+
+ul.table,
+ul.hand,
+ul.deck {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 calc(0.5*var(--rem)) 0;
+    position: relative;
+    clear: both;
+    border-radius: calc(0.3*var(--rem));
+}
+ul.hand {
+    margin-bottom: calc(0.5*var(--rem));
+}
+ul.table li,
+ul.hand li,
+ul.deck li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+ul.hand,
+ul.deck {
+    height: calc(7.2*var(--rem));
+}
+
+ul.hand li:not(:last-child) {
+    margin-right: calc(-3.9*var(--rem));
+}
+
+ul.deck li:not(:last-child) {
+    margin-right: calc(-5*var(--rem));
+}

@@ -5,95 +5,104 @@
         <title>Card Game</title>
         <meta name="author" content="Michael Huang" />
 
+        <link rel="shortcut icon" href="favicon.ico" />
+        <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+        
         <link rel="stylesheet" href="css/cards.css" />
         <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/dynamic/vars.css" />
+        <link rel="stylesheet" href="css/dynamic/cards.css" />
+        <link rel="stylesheet" href="css/dynamic/styles.css" />
     </head>
 
     <body>
-        <div id="header">
-            <div id="titleText">
-                <h3>Card Game</h3>
-            </div>
-            <div id="playerName">
-                <div>
-                    <span contenteditable autocapitalize="false" autocorrect="false" autocomplete="off"></span>
+        <div id="content">
+            <div id="header">
+                <div id="titleText">
+                    <h3>Card Game</h3>
                 </div>
-            </div>
-            <div id="joinCode">
-                <div>
-                    <span class="tooltip">click to copy</span>
-                    <span class="joinCode"></span>
-                </div>
-            </div>
-        </div>
-        <div id="app" class="preGame">
-            <div id="lobby">
-                <div id="lobbyList" class="hidden">
-                    <div id="player-0" playerNumber="0" class="player hidden">
-                        <span class="name"></span>
-                        <span class="score"></span>
-                    </div>
-                    <div id="player-1" playerNumber="1" class="player hidden">
-                        <span class="name"></span>
-                        <span class="score"></span>
-                    </div>
-                    <div id="player-2" playerNumber="2" class="player hidden">
-                        <span class="name"></span>
-                        <span class="score"></span>
+                <div id="playerName">
+                    <div>
+                        <span contenteditable autocapitalize="false" autocorrect="false" autocomplete="off"></span>
                     </div>
                 </div>
-                <div id="lobbyFunctions">
-                    <div id="createRoom" event="createRoom" class="lobbyFunction hidden">
-                        <input type="button" class="button inputGroup" value="Create Room" />
-                        <input
-                            type="text"
-                            class="textField inputGroup"
-                            placeholder="Room Name"
-                            autocomplete="off"
-                            autocorrect="off"
-                        />
-                    </div>
-                    <div id="joinRoom" event="joinRoom" class="lobbyFunction hidden">
-                        <input type="button" class="button inputGroup" value="Join Room" />
-                        <input
-                            type="text"
-                            class="textField inputGroup"
-                            placeholder="Code"
-                            autocomplete="off"
-                            autocorrect="off"
-                        />
-                    </div>
-                    <div id="leaveRoom" event="leaveRoom" class="lobbyFunction hidden">
-                        <input type="button" class="button" value="Leave Room" />
-                    </div>
-                    <div id="startGame" event="startGame" class="lobbyFunction hidden">
-                        <input type="button" class="button" value="Start Game" />
+                <div id="joinCode">
+                    <div>
+                        <span class="tooltip">copy link</span>
+                        <span class="joinCode"></span>
                     </div>
                 </div>
             </div>
-            <div id="game">
-                <div id="otherCards">
-                    <div id="opponentCards">
-                        <div id="opponent-0" number="0" class="opponent">
-                            <span class="opponentName"></span>
-                            <span class="cardCount"></span>
-                            <ul class="deck"></ul>
+            <div id="app" class="preGame">
+                <div id="lobby">
+                    <div id="lobbyList" class="hidden">
+                        <div id="player-0" playerNumber="0" class="player hidden">
+                            <span class="name"></span>
+                            <span class="score"></span>
                         </div>
-                        <div id="opponent-1" number="1" class="opponent">
-                            <span class="opponentName"></span>
-                            <span class="cardCount"></span>
-                            <ul class="deck"></ul>
+                        <div id="player-1" playerNumber="1" class="player hidden">
+                            <span class="name"></span>
+                            <span class="score"></span>
+                        </div>
+                        <div id="player-2" playerNumber="2" class="player hidden">
+                            <span class="name"></span>
+                            <span class="score"></span>
+                        </div>
+                    </div>
+                    <div id="lobbyFunctions">
+                        <div id="createRoom" event="createRoom" class="lobbyFunction hidden">
+                            <input type="button" class="button inputGroup" value="Create" />
+                            <input
+                                type="text"
+                                class="textField inputGroup"
+                                placeholder="Room Name"
+                                autocomplete="off"
+                                autocorrect="off"
+                            />
+                        </div>
+                        <div id="joinRoom" event="joinRoom" class="lobbyFunction hidden">
+                            <input type="button" class="button inputGroup" value="Join" />
+                            <input
+                                type="text"
+                                class="textField inputGroup"
+                                placeholder="Code / Link"
+                                autocomplete="off"
+                                autocorrect="off"
+                            />
+                        </div>
+                        <div id="leaveRoom" event="leaveRoom" class="lobbyFunction hidden">
+                            <input type="button" class="button" value="Leave" />
+                        </div>
+                        <div id="startGame" event="startGame" class="lobbyFunction hidden">
+                            <input type="button" class="button" value="Start" />
                         </div>
                     </div>
                 </div>
-                <div id="lastCombo">
-                    <ul class="hand"></ul>
-                </div>
-                <div id="myCards">
-                    <ul class="hand"></ul>
-                    <input id="playCards" type="button" class="button clear" value="Play Cards" />
+                <div id="game">
+                    <div id="otherCards">
+                        <div id="opponentCards">
+                            <div id="opponent-0" number="0" class="opponent">
+                                <span class="opponentName"></span>
+                                <span class="cardCount"></span>
+                                <ul class="deck"></ul>
+                            </div>
+                            <div id="opponent-1" number="1" class="opponent">
+                                <span class="opponentName"></span>
+                                <span class="cardCount"></span>
+                                <ul class="deck"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="lastCombo">
+                        <ul class="hand"></ul>
+                    </div>
+                    <div id="myCards">
+                        <ul class="hand"></ul>
+                        <input id="playCards" type="button" class="button clear" value="Play Cards" />
+                    </div>
                 </div>
             </div>
         </div>

@@ -99,8 +99,25 @@ class LobbyManager {
 
             let room = this.roomFromCode(code.toUpperCase());
             if (!room) {
-                callback(player.roomResponse('No such room exists.'));
-                return;
+                // try parsing as url
+                let url = undefined;
+                try {
+                    url = new URL(code);
+                    let path = url.pathname;
+                    let matches = path.match(/^\/([A-Z0-9]{5})$/);
+                    if (matches) {
+                        code = matches[1];
+                    }
+                } catch (error) {
+                    callback(player.roomResponse('No such room exists.'));
+                    return;
+                }
+                
+                room = this.roomFromCode(code.toUpperCase());
+                if (!room) {
+                    callback(player.roomResponse('No such room exists.'));
+                    return;
+                }
             }
 
             if (room.size >= 3) {

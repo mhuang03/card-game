@@ -24,12 +24,9 @@ app.get('/debug', (req, res) => {
 app.get('/:joinCode', (req, res) => {
     let joinCode = req.params.joinCode;
     if (lobby.roomCodes.has(joinCode)) {
-        let room = lobby.roomFromCode(joinCode);
-        if (!room.full && room.size < 3) {
-            return res.sendFile('index.html', {
-                root: publicPath,
-            });
-        }
+        return res.sendFile('index.html', {
+            root: publicPath,
+        });
     }
     return res.redirect('/');
 });
@@ -67,8 +64,14 @@ io.use((socket, next) => {
 
     if (matches) {
         let joinCode = matches[1];
+        joinCode = joinCode.toUpperCase();
         if (lobby.roomCodes.has(joinCode)) {
             let room = lobby.roomFromCode(joinCode);
+            if (player.inRoom) {
+                if (player.room == room) {
+                    return next();
+                }
+            }
             if (!room.full && room.size < 3) {
                 if (player.inRoom) {
                     player.leaveRoom();
@@ -85,7 +88,7 @@ io.on('connection', (socket) => {
     player.emit('roomStateUpdate', player.roomResponse());
     if (player.inRoom) {
         if (player.room.inGame) {
-            player.emit('gameStateUpdate', player.room.game.gameResponse());
+            player.emit('gameStateUpdate', player.room.game.gameResponse(player));
         }
     }
 
