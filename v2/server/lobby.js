@@ -86,6 +86,20 @@ class LobbyManager {
                 callback(player.roomResponse('Please enter a non-empty room name.'));
                 return;
             }
+            roomName = roomName.trim();
+
+            if (roomName.length > 16) {
+                callback(player.roomResponse('Room names have a max length of 16.'));
+                return;
+            }
+
+            for (let char of [...roomName]) {
+                let charCode = char.charCodeAt(0);
+                if ((charCode > 126 || charCode < 32) && !(charCode == 160)) {
+                    callback(player.roomResponse('ASCII characters only.'));
+                    return;
+                }
+            }
 
             this.newRoom(player, roomName.trim());
             callback(player.roomResponse());
@@ -198,6 +212,35 @@ class LobbyManager {
             callback(player.roomResponse());
         });
 
+        player.on('setRoomName', (name, callback) => {
+            if (!player.isHost) {
+                callback(player.roomResponse('Only hosts can update the room name.'));
+                return;
+            }
+            
+            if (name.trim() == '') {
+                callback(player.roomResponse('Please enter a non-empty name.'));
+                return;
+            }
+            name = name.trim();
+
+            if (name.length > 16) {
+                callback(player.roomResponse('Room names have a max length of 16.'));
+                return;
+            }
+
+            for (let char of [...name]) {
+                let charCode = char.charCodeAt(0);
+                if ((charCode > 126 || charCode < 32) && !(charCode == 160)) {
+                    callback(player.roomResponse('ASCII characters only.'));
+                    return;
+                }
+            }
+
+            player.room.setName(name);
+            callback(player.roomResponse());
+        });
+
         player.on('roomStateRequest', (callback) => {
             callback(player.roomResponse());
         });
@@ -238,7 +281,10 @@ class Room {
     }
 
     setName(name) {
-        this.name = name;
+        if (this.name != name) {
+            this.name = name;
+            this.emitRoomStateUpdate();
+        }
     }
 
     setHost(player) {

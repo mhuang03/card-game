@@ -22,11 +22,13 @@
         <div id="content">
             <div id="header">
                 <div id="titleText">
-                    <h3>Card Game</h3>
-                </div>
-                <div id="playerName">
                     <div>
-                        <span contenteditable autocapitalize="false" autocorrect="false" autocomplete="off"></span>
+                        <h3 autocapitalize="false" autocorrect="false" autocomplete="off" spellcheck="off">Card Game</h3>
+                    </div>
+                </div>
+                <div id="playerName" class="editable">
+                    <div>
+                        <span contenteditable autocapitalize="false" autocorrect="false" autocomplete="off" spellcheck="off"></span>
                     </div>
                 </div>
                 <div id="joinCode">
@@ -61,6 +63,7 @@
                                 placeholder="Room Name"
                                 autocomplete="off"
                                 autocorrect="off"
+                                spellcheck="off"
                             />
                         </div>
                         <div id="joinRoom" event="joinRoom" class="lobbyFunction hidden">
@@ -71,6 +74,7 @@
                                 placeholder="Code / Link"
                                 autocomplete="off"
                                 autocorrect="off"
+                                spellcheck="off"
                             />
                         </div>
                         <div id="leaveRoom" event="leaveRoom" class="lobbyFunction hidden">

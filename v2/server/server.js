@@ -31,6 +31,8 @@ app.get('/:joinCode', (req, res) => {
     return res.redirect('/');
 });
 
+
+
 server.listen(port, () => {
     console.log(`Server is up on port ${port}.`);
 });

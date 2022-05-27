@@ -140,8 +140,23 @@
             $('#playerName > div > span').blur();
         }
     });
-    $('#playerName > div > span').click(() => {
-        $('#playerName > div > span').select();
+
+    // make room name editable and prevent enter
+    $('#titleText > div > h3').focusout(() => {
+        if (!$('#titleText > div > h3').hasClass('editable')) {
+            return;
+        }
+        socket.emit('setRoomName', $('#titleText > div > h3').text(), handleRoomResponse);
+    });
+    $('#titleText > div > h3').keypress((e) => {
+        if (!$('#titleText > div > h3').hasClass('editable')) {
+            return;
+        }
+        if (e.key == 'Enter' || e.keyCode == 13) {
+            e.preventDefault();
+            $('#titleText > div > h3').focusout();
+            $('#titleText > div > h3').blur();
+        }
     });
 
     // join code copy to clipboard
@@ -159,7 +174,7 @@
         if (roomState.inRoom) {
             let roomInfo = roomState.roomInfo;
             $('#joinCode > div > span.joinCode').text(roomInfo.joinCode);
-            $('#titleText > h3').text(roomInfo.roomName);
+            $('#titleText > div > h3').text(roomInfo.roomName);
             $('#lobbyList').removeClass('hidden');
             $('#lobbyList > .player').each((idx, item) => {
                 let $player = $(item);
@@ -175,7 +190,11 @@
                     if (roomInfo.lastWinner) {
                         if (playerNumber == roomInfo.lastWinner.playerNumber) {
                             $player.addClass('winner');
+                        } else {
+                            $player.removeClass('winner');
                         }
+                    } else {
+                        $player.removeClass('winner');
                     }
                 } else {
                     $player.addClass('hidden');
@@ -206,13 +225,21 @@
                 $('#startGame').addClass('hidden');
             }
 
+            if (roomInfo.host.playerNumber == roomInfo.self.playerNumber) {
+                $('#titleText > div > h3').addClass('editable');
+                $('#titleText > div > h3').attr('contenteditable', '');
+            } else {
+                $('#titleText > div > h3').removeClass('editable');
+                $('#titleText > div > h3').attr('contenteditable', null);
+            }
+
             $('#createRoom').addClass('hidden');
             $('#joinRoom').addClass('hidden');
             $('#leaveRoom').removeClass('hidden');
             $('#lobby').removeClass('preRoom');
         } else {
             $('#joinCode > div > span.joinCode').text('');
-            $('#titleText > h3').text('Card Game');
+            $('#titleText > div > h3').text('Card Game');
             $('#lobbyList').addClass('hidden');
             $('#lobbyList > .player').each((idx, item) => {
                 let $player = $(item);
@@ -230,6 +257,8 @@
             $('#app').addClass('preGame');
             $('#playerName > div > span').removeClass('turn');
             $('#lobby').addClass('preRoom');
+            $('#titleText > div > h3').removeClass('editable');
+            $('#titleText > div > h3').attr('contenteditable', null);
         }
         $('#setName').removeClass('hidden');
 
@@ -373,7 +402,7 @@
 
     // log all events
     socket.onAny((event, ...args) => {
-        //console.log(event, ...args);
+        console.log(event, ...args);
     });
 
     let Game = {
